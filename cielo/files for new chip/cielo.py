@@ -5,6 +5,9 @@ import gdspy
 ld_LN = {"layer": 32, "datatype": 0}
 ld_Metal = {"layer": 29, "datatype": 0}
 ld_SU8 = {"layer": 50, "datatype": 0}
+ld_METAL2 = {"layer": 29, "datatype": 0}
+ld_NWG = {"layer": 32, "datatype": 0}
+ld_Silox = {"layer": 50, "datatype": 0}
 
 # global constants
 Width_WG = 5
@@ -840,38 +843,38 @@ def cielo_close_sbend_old (cell,B_length = 1580 , Brad_length = 426 , Brad = 6 ,
 
 
 # draw 1x4 tree new contact
-def cielo_1x4internal (cell,B_length = 1750 , Brad_length = 426 , Brad = 6 , A_length = 12220 , S_length = 6833 , S_height = 210 , S_heigth_top = 190 
+def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 , A_length = 12220 , S_length = 6833 , S_height = 210 , S_heigth_top = 190 
            , Width_WG = Width_WG ,Metal_width = Metal_width  , x = 0 , y = 0  , sign_at_top = 0 , holes_width = holes_width , diss_holes_wg = diss_holes_wg , C = 1):
     
    points = [(x - tri_diss_from_wg , y + 500),(x - tri_diss_from_wg , y + 500 + tri_height),(x - tri_diss_from_wg - tri_width , y + 500 + tri_height)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    points = [(x - tri_diss_from_wg , y + 500 +  tri_height),(x - tri_diss_from_wg , y + 500 + tri_height*2),(x - tri_diss_from_wg - tri_width , y + 500 + tri_height*2)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    points = [(x + gap - tri_diss_from_wg , y + 500),(x + gap - tri_diss_from_wg , y + 500 + tri_height),(x + gap - tri_diss_from_wg - tri_width , y + 500 + tri_height)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    points = [(x + gap - tri_diss_from_wg , y + 500 +  tri_height),(x + gap - tri_diss_from_wg , y + 500 + tri_height*2),(x + gap - tri_diss_from_wg - tri_width , y + 500 + tri_height*2)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    #the start of the WG
    path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
-   path1.segment(length = B_length , direction ="+y" , **ld_LN)
-   path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)
+   path1.segment(length = B_length , direction ="+y" , **ld_NWG)
+   path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_NWG)
    
    
    x = path1.x
    y = path1.y
    
-   rect = gdspy.Rectangle(( x + Brad/2 + Width_WG/2 , y ), ( x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_LN)
-   circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_LN ,tolerance = 0.00001 , number_of_points = 199)
-   stam = gdspy.boolean(rect,circle,"not",**ld_LN)
-   cell.add(stam)
+   rect = gdspy.Rectangle(( x + Brad/2 + Width_WG/2 , y ), ( x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_NWG)
+   circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_NWG ,tolerance = 0.00001 , number_of_points = 199)
+   stam = gdspy.boolean(rect,circle,"not",**ld_NWG)
+   top_cell.add(stam)
    
    #create the arrow sign
    points = [( x - diss_arrow_from_wg , y + 500 ),(x - diss_arrow_from_wg - arrow_diss_down , y + 500)
@@ -880,95 +883,107 @@ def cielo_1x4internal (cell,B_length = 1750 , Brad_length = 426 , Brad = 6 , A_l
              ,( x - diss_arrow_from_wg - arrow_diss_down/2 , y + 500 + arrow_mid_height + arrow_top_height)
              ,(x - diss_arrow_from_wg + arrow_diss_sides , y + 500 + arrow_mid_height)
              ,(x - diss_arrow_from_wg , y + 500 + arrow_mid_height)]
-   arrow = gdspy.Polygon(points,**ld_LN)
-   arrowM = gdspy.Polygon(points,**ld_Metal)
-   cell.add(arrow)
-   cell.add(arrowM)
+   arrow = gdspy.Polygon(points,**ld_NWG)
+   arrowM = gdspy.Polygon(points,**ld_METAL2)
+   top_cell.add(arrow)
+   top_cell.add(arrowM)
    
    
    #creating the right arm with the openings to the contacts
    path2 = gdspy.Path( width = Width_WG ,initial_point = ( path1.x + Brad/2,path1.y + 0.5 ))
-   path2 = sbendPath( wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_LN)
+   path2 = sbendPath( wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_NWG)
    
-   if (C == 1):
-       rec = gdspy.Rectangle((path2.x - diss_holes_wg - Width_WG/2 - diss_to_metal , path2.y + 1000 - holes_height /2)
-                             ,(path2.x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal , path2.y + 1000 + holes_height /2), **ld_SU8)
-       rect = rec.fillet(50)
-       cell.add(rect)
-       
-       rec = gdspy.Rectangle((path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg , path2.y + 3000 - holes_height /2)
-                             ,(path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , path2.y + 3000 + holes_height /2), **ld_SU8)
-       rect = rec.fillet(50)
-       cell.add(rect)
+   rec = gdspy.Rectangle((path2.x - diss_holes_wg - Width_WG/2 - diss_to_metal , path2.y + 100 - holes_height /2)
+                         ,(path2.x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal , path2.y + 100 + holes_height /2), **ld_Silox)
+   rect = rec.fillet(50)
+   top_cell.add(rect)
    
-   path2.segment(length = A_length + 673 , direction ="+y" , **ld_LN)
+   rec = gdspy.Rectangle((path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg , path2.y + 600 - holes_height /2)
+                         ,(path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , path2.y + 600 + holes_height /2), **ld_Silox)
+   rect = rec.fillet(50)
+   top_cell.add(rect)
+   
+   path2.segment(length = A_length + 673 , direction ="+y" , **ld_NWG)
    
    
    #creating the left arm
    path3 = gdspy.Path( width = Width_WG ,initial_point = ( path1.x - Brad/2 , path1.y + 0.5 ))
    path3.x = path3.x - S_height/2
-   path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_LN)
-   path3.segment(length = A_length + 673 , direction ="+y" , **ld_LN)
+   path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_NWG)
+   path3.segment(length = A_length + 673 , direction ="+y" , **ld_NWG)
    
    
    #creating the contact
-   if(C == 1):
-       mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
-       rect = gdspy.Rectangle((x - Metal_width - S_height , y + S_length/2), (x + Metal_width + S_heigth_top , y + S_length + A_length), **ld_Metal)
-       stam = gdspy.boolean(rect,mid,"not",**ld_Metal)
-       
-       path5=gdspy.Path(50,(0,y+S_length/2-100))
-       path5.segment(450,"+x",**ld_Metal)
-       path5.turn(100,a2r(90),final_width=100,**ld_Metal)
-       
-       path6 = gdspy.Path(50,(0,y+S_length/2-100))
-       path6.segment(450,"+x",**ld_Metal)
-       path6.turn(100,a2r(90),final_width=100,**ld_Metal)
-       path6.mirror((0,y+S_length/2+25),(0,y+S_length/2-25))
-       
-       
-       path7=gdspy.Path(50,(0,path3.y-573))
-       path7.segment(450,"+x",**ld_Metal)
-       path7.turn(100,a2r(-90),final_width=100,**ld_Metal)
-       
-       path8 = gdspy.Path(50,(0,path3.y-573))
-       path8.segment(450,"+x",**ld_Metal)
-       path8.turn(100,a2r(-90),final_width=100,**ld_Metal)
-       path8.mirror((0,path3.y-500+25),(0,path3.y-500-25))
+   mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_Silox)
+   rect = gdspy.Rectangle((x - Metal_width , y + S_length/2), (x + Metal_width , y + S_length + A_length), **ld_METAL2)
+   stam = gdspy.boolean(rect,mid,"not",**ld_METAL2)
+   
+   path5=gdspy.Path(50,(0,y+S_length/2-100))
+   path5.segment(450,"+x",**ld_METAL2)
+   path5.turn(100,a2r(90),final_width=100,**ld_METAL2)
+   
+   path6 = gdspy.Path(50,(0,y+S_length/2-100))
+   path6.segment(450,"+x",**ld_METAL2)
+   path6.turn(100,a2r(90),final_width=100,**ld_METAL2)
+   path6.mirror((0,y+S_length/2+25),(0,y+S_length/2-25))
    
    
+   path7=gdspy.Path(50,(0,path3.y-573))
+   path7.segment(450,"+x",**ld_METAL2)
+   path7.turn(100,a2r(-90),final_width=100,**ld_METAL2)
+   
+   path8 = gdspy.Path(50,(0,path3.y-573))
+   path8.segment(450,"+x",**ld_METAL2)
+   path8.turn(100,a2r(-90),final_width=100,**ld_METAL2)
+   path8.mirror((0,path3.y-500+25),(0,path3.y-500-25))
+   
+   
+   
+   
+   
+  
    # sign at the top
    x = path3.x
    y = path3.y - 523
    
    points = [(x - tri_diss_from_wg , y ),(x - tri_diss_from_wg , y + tri_height),(x - tri_diss_from_wg - tri_width , y  + tri_height)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    points = [(x - tri_diss_from_wg , y  +  tri_height),(x - tri_diss_from_wg , y  + tri_height*2),(x - tri_diss_from_wg - tri_width , y  + tri_height*2)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    x = path2.x
    
    points = [(x  - tri_diss_from_wg , y ),(x  - tri_diss_from_wg , y  + tri_height),(x  - tri_diss_from_wg - tri_width , y  + tri_height)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    points = [(x  - tri_diss_from_wg , y  +  tri_height),(x  - tri_diss_from_wg , y  + tri_height*2),(x  - tri_diss_from_wg - tri_width , y  + tri_height*2)]
-   tri = gdspy.Polygon(points , **ld_Metal)
-   cell.add(tri)
+   tri = gdspy.Polygon(points , **ld_METAL2)
+   top_cell.add(tri)
    
    
-   cell.add(path1)
-   cell.add(path2)
-   cell.add(path3)
    
-   cell.add(path5)
-   cell.add(path6)
-   cell.add(path7)
-   cell.add(path8)
-   cell.add(stam)
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   top_cell.add(path1)
+   top_cell.add(path2)
+   top_cell.add(path3)
+   
+   top_cell.add(path5)
+   top_cell.add(path6)
+   top_cell.add(path7)
+   top_cell.add(path8)
+   top_cell.add(stam)
 
    
    return([path2.x , path2.y , path3.x , path3.y])
