@@ -413,25 +413,25 @@ def cielo_sbend_old (top_cell,B_length = 1580 , Brad_length = 426 , Brad = 6 , A
     
     #creating the contact
     mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
-    rect = gdspy.Rectangle((x - Metal_width - S_height , y + S_length/2), (x + Metal_width + S_heigth_top , y + S_length + A_length), **ld_Metal)
+    rect = gdspy.Rectangle((x - Metal_width - S_height - 68, y + S_length/2), (x + Metal_width + S_heigth_top + 68, y + S_length + A_length), **ld_Metal)
     stam = gdspy.boolean(rect,mid,"not",**ld_Metal)
     
     path5=gdspy.Path(50,(0,y+S_length/2-100))
-    path5.segment(350,"+x",**ld_Metal)
+    path5.segment(250,"+x",**ld_Metal)
     path5.turn(100,a2r(90),final_width=100,**ld_Metal)
     
     path6 = gdspy.Path(50,(0,y+S_length/2-100))
-    path6.segment(350,"+x",**ld_Metal)
+    path6.segment(250,"+x",**ld_Metal)
     path6.turn(100,a2r(90),final_width=100,**ld_Metal)
     path6.mirror((0,y+S_length/2+25),(0,y+S_length/2-25))
     
     
     path7=gdspy.Path(50,(0,path3.y-573))
-    path7.segment(350,"+x",**ld_Metal)
+    path7.segment(250,"+x",**ld_Metal)
     path7.turn(100,a2r(-90),final_width=100,**ld_Metal)
     
     path8 = gdspy.Path(50,(0,path3.y-573))
-    path8.segment(350,"+x",**ld_Metal)
+    path8.segment(250,"+x",**ld_Metal)
     path8.turn(100,a2r(-90),final_width=100,**ld_Metal)
     path8.mirror((0,path3.y-500+25),(0,path3.y-500-25))
     
