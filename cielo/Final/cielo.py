@@ -988,7 +988,7 @@ def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 ,
    
    return([path2.x , path2.y , path3.x , path3.y])
 
-def cielo_1x4 (cell , C = 1):
+def cielo_1x4 (cell , C = 1,Width_WG = Width_WG):
 
     # first
     [x1 , y1 , x0 , y0] = cielo_1x4internal(cell,B_length = 1000,Brad_length = 333.3 , A_length = 10000 , S_length = 2000
