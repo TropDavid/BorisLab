@@ -988,17 +988,19 @@ def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 ,
    
    return([path2.x , path2.y , path3.x , path3.y])
 
-def cielo_1x4 (cell,B_length = 1050 , Brad_length = 426 , Brad = 6 , A_length = 12220 , S_length = 6833 , S_height = 210 , S_heigth_top = 190 
-           , Width_WG = Width_WG ,M_width = Metal_width  , x = 0 , y = 0  , sign_at_top = 0 , holes_width = holes_width , diss_holes_wg = diss_holes_wg , C = 1):
+def cielo_1x4 (cell , C = 1):
 
     # first
-    [x1 , y1 , x0 , y0] = cielo_1x4internal(cell ,S_height = 320 , S_heigth_top = 280 , Metal_width = 200 ,C = C)
+    [x1 , y1 , x0 , y0] = cielo_1x4internal(cell,B_length = 1000,Brad_length = 333.3 , A_length = 10000 , S_length = 2000
+                                            ,S_height = 320 , S_heigth_top = 280 , Metal_width = 200 ,C = C)
 
     #seond Top
-    [x11 , y11 , x10 ,y10 ] = cielo_1x4internal (cell, x = x1 , y = y1 , S_height = 110 , S_heigth_top = 90 , Metal_width = 100 , holes_width = 140 , diss_holes_wg = 24 , C = C)
+    [x11 , y11 , x10 ,y10 ] = cielo_1x4internal (cell, B_length = 0 , Brad_length = 266.6 , A_length = 5400 , S_length = 1000
+                                                 , x = x1 , y = y1 , S_height = 110 , S_heigth_top = 90 , Metal_width = 100 , holes_width = 140 , diss_holes_wg = 24 , C = C)
 
     #second Bottom
-    [x01 , y01 , x00 ,y00 ] = cielo_1x4internal (cell, x = x0 , y = y0, S_height = 110 , S_heigth_top = 90 , Metal_width = 100  , holes_width = 140  , diss_holes_wg = 24 , C = C)
+    [x01 , y01 , x00 ,y00 ] = cielo_1x4internal (cell, B_length = 0 ,Brad_length = 266.6 , A_length = 5400 , S_length = 1000
+                                                 , x = x0 , y = y0, S_height = 110 , S_heigth_top = 90 , Metal_width = 100  , holes_width = 140  , diss_holes_wg = 24 , C = C)
 
 
 
