@@ -165,10 +165,10 @@ insert_tiles([34],"phase Spliter_Open_34",cielo_sbend_old, Metal_width = 200 , d
 insert_tiles([35],"phase Spliter_Open_35",cielo_sbend_old, Metal_width = 200 , diss_to_metal = 17 ,Width_WG=5.5)
 
 # 1x4 tree
-insert_tiles([36],"1x4_wg=36",cielo_1x4,Width_WG=4 , C = 1)
-insert_tiles([37],"1x4_wg=37",cielo_1x4,Width_WG=4.5, C = 1)
-insert_tiles([38],"1x4_wg=38",cielo_1x4,Width_WG=5, C = 1)
-insert_tiles([39],"1x4_wg=39",cielo_1x4,Width_WG=5.5, C = 1)
+insert_tiles([36],"1x4_wg=36",cielo_1x4,Width_WG=4 , C = 0)
+insert_tiles([37],"1x4_wg=37",cielo_1x4,Width_WG=4.5, C = 0)
+insert_tiles([38],"1x4_wg=38",cielo_1x4,Width_WG=5, C = 0)
+insert_tiles([39],"1x4_wg=39",cielo_1x4,Width_WG=5.5, C = 0)
 insert_tiles([40],"1x4_wg=40",cielo_1x4,Width_WG=4, C = 0)
 insert_tiles([41],"1x4_wg=41",cielo_1x4,Width_WG=4.5, C = 0)
 insert_tiles([42],"1x4_wg=42",cielo_1x4,Width_WG=5, C = 0)

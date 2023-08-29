@@ -892,17 +892,17 @@ def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 ,
    #creating the right arm with the openings to the contacts
    path2 = gdspy.Path( width = Width_WG ,initial_point = ( path1.x + Brad/2,path1.y + 0.5 ))
    path2 = sbendPath( wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_NWG)
-   
-   rec = gdspy.Rectangle((path2.x - diss_holes_wg - Width_WG/2 - diss_to_metal , path2.y + 100 - holes_height /2)
-                         ,(path2.x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal , path2.y + 100 + holes_height /2), **ld_Silox)
-   rect = rec.fillet(50)
-   top_cell.add(rect)
-   
-   rec = gdspy.Rectangle((path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg , path2.y + 600 - holes_height /2)
-                         ,(path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , path2.y + 600 + holes_height /2), **ld_Silox)
-   rect = rec.fillet(50)
-   top_cell.add(rect)
-   
+   if(C==1):
+       rec = gdspy.Rectangle((path2.x - diss_holes_wg - Width_WG/2 - diss_to_metal , path2.y + 100 - holes_height /2)
+                             ,(path2.x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal , path2.y + 100 + holes_height /2), **ld_Silox)
+       rect = rec.fillet(50)
+       top_cell.add(rect)
+       
+       rec = gdspy.Rectangle((path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg , path2.y + 600 - holes_height /2)
+                             ,(path2.x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , path2.y + 600 + holes_height /2), **ld_Silox)
+       rect = rec.fillet(50)
+       top_cell.add(rect)
+       
    path2.segment(length = A_length + 673 , direction ="+y" , **ld_NWG)
    
    
@@ -914,28 +914,29 @@ def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 ,
    
    
    #creating the contact
-   mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_Silox)
-   rect = gdspy.Rectangle((x - Metal_width , y + S_length/2), (x + Metal_width , y + S_length + A_length), **ld_METAL2)
-   stam = gdspy.boolean(rect,mid,"not",**ld_METAL2)
-   
-   path5=gdspy.Path(50,(0,y+S_length/2-100))
-   path5.segment(450,"+x",**ld_METAL2)
-   path5.turn(100,a2r(90),final_width=100,**ld_METAL2)
-   
-   path6 = gdspy.Path(50,(0,y+S_length/2-100))
-   path6.segment(450,"+x",**ld_METAL2)
-   path6.turn(100,a2r(90),final_width=100,**ld_METAL2)
-   path6.mirror((0,y+S_length/2+25),(0,y+S_length/2-25))
-   
-   
-   path7=gdspy.Path(50,(0,path3.y-573))
-   path7.segment(450,"+x",**ld_METAL2)
-   path7.turn(100,a2r(-90),final_width=100,**ld_METAL2)
-   
-   path8 = gdspy.Path(50,(0,path3.y-573))
-   path8.segment(450,"+x",**ld_METAL2)
-   path8.turn(100,a2r(-90),final_width=100,**ld_METAL2)
-   path8.mirror((0,path3.y-500+25),(0,path3.y-500-25))
+   if (C==1):
+       mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_Silox)
+       rect = gdspy.Rectangle((x - Metal_width , y + S_length/2), (x + Metal_width , y + S_length + A_length), **ld_METAL2)
+       stam = gdspy.boolean(rect,mid,"not",**ld_METAL2)
+       
+       path5=gdspy.Path(50,(0,y+S_length/2-100))
+       path5.segment(450,"+x",**ld_METAL2)
+       path5.turn(100,a2r(90),final_width=100,**ld_METAL2)
+       
+       path6 = gdspy.Path(50,(0,y+S_length/2-100))
+       path6.segment(450,"+x",**ld_METAL2)
+       path6.turn(100,a2r(90),final_width=100,**ld_METAL2)
+       path6.mirror((0,y+S_length/2+25),(0,y+S_length/2-25))
+       
+       
+       path7=gdspy.Path(50,(0,path3.y-573))
+       path7.segment(450,"+x",**ld_METAL2)
+       path7.turn(100,a2r(-90),final_width=100,**ld_METAL2)
+       
+       path8 = gdspy.Path(50,(0,path3.y-573))
+       path8.segment(450,"+x",**ld_METAL2)
+       path8.turn(100,a2r(-90),final_width=100,**ld_METAL2)
+       path8.mirror((0,path3.y-500+25),(0,path3.y-500-25))
    
    
    
@@ -978,20 +979,20 @@ def cielo_1x4internal (top_cell,B_length = 1750 , Brad_length = 426 , Brad = 6 ,
    top_cell.add(path1)
    top_cell.add(path2)
    top_cell.add(path3)
-   
-   top_cell.add(path5)
-   top_cell.add(path6)
-   top_cell.add(path7)
-   top_cell.add(path8)
+   if(C ==1):
+       top_cell.add(path5)
+       top_cell.add(path6)
+       top_cell.add(path7)
+       top_cell.add(path8)
    top_cell.add(stam)
 
    
    return([path2.x , path2.y , path3.x , path3.y])
 
-def cielo_1x4 (cell , C = 1,Width_WG = Width_WG):
+def cielo_1x4 (cell , C = 1 , Width_WG = Width_WG):
 
     # first
-    [x1 , y1 , x0 , y0] = cielo_1x4internal(cell,B_length = 1000,Brad_length = 333.3 , A_length = 10000 , S_length = 2000
+    [x1 , y1 , x0 , y0] = cielo_1x4internal(cell,B_length = 1000,Brad_length = 333.3 , A_length = 8489 + 175 , S_length = 2000
                                             ,S_height = 320 , S_heigth_top = 280 , Metal_width = 200 ,C = C)
 
     #seond Top
