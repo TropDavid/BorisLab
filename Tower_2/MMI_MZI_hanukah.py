@@ -245,6 +245,7 @@ def MZI (x = 0,y = 0,my_length = 4800 ,B_length = 500, A_length = 500 , Taper_le
     path7.segment(length = Straight_in_Extra , direction = "+x" , **ld_TNR)
     path7.arc(radius = 10, initial_angle = a2r(270),final_angle = a2r(360),final_width = 8,**ld_TNR)
     
+    
     Via(x_i = path7.x , y_i = path7.y + 1 , info_l = ld_VIA1 , info_M = ld_METAL2 , l_via = 0.26 , dis_from_edge = 0.15 , Col = 40 , Row = 20 , MN = 2)
     Via(x_i = path7.x , y_i = path7.y + 1 , info_l = ld_VIA2 , info_M = ld_METAL3 , l_via = 0.5 , dis_from_edge = 0.5 , Col = 20 , Row = 10 , MN = 3)
     
@@ -321,6 +322,8 @@ def MMI (B_length = 100 , Brad_length = 20 , Brad = 0.3 , MMI_length = 15 , MMI_
         path5 = gdspy.Path(width = Width_WG ,initial_point = (x , y))
         path5.segment(length = A_length , direction = "+x" , **ld_TNR)
         path5.arc(radius = 10, initial_angle = a2r(270),final_angle = a2r(360),final_width = 8,**ld_TNR)
+        rect = gdspy.Rectangle((path5.x - 12,path5.y), (path5.x + 12 , path5.y + 12) , **ld_TNR)
+        top_cell.add(rect)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA1 , info_M = ld_METAL2 , l_via = 0.26 , dis_from_edge = 0.15 , Col = 40 , Row = 20 , MN = 2)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA2 , info_M = ld_METAL3 , l_via = 0.5 , dis_from_edge = 0.5 , Col = 20 , Row = 10 , MN = 3)
         
@@ -344,6 +347,8 @@ def MMI (B_length = 100 , Brad_length = 20 , Brad = 0.3 , MMI_length = 15 , MMI_
         path5 = gdspy.Path(width = Width_WG ,initial_point = (x , y))
         path5.segment(length = A_length , direction = "+x" , **ld_TNR)
         path5.arc(radius = 10, initial_angle = a2r(270),final_angle = a2r(360),final_width = 8,**ld_TNR)
+        rect = gdspy.Rectangle((path5.x - 12,path5.y), (path5.x + 12 , path5.y + 12) , **ld_TNR)
+        top_cell.add(rect)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA1 , info_M = ld_METAL2 , l_via = 0.26 , dis_from_edge = 0.15 , Col = 40 , Row = 20 , MN = 2)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA2 , info_M = ld_METAL3 , l_via = 0.5 , dis_from_edge = 0.5 , Col = 20 , Row = 10 , MN = 3)
         
