@@ -203,6 +203,8 @@ def MMI (B_length = 1000 , Brad_length = 200 , Brad = 0.3 , MMI_length = 15 , MM
     
     rect = gdspy.Rectangle((path1.x , path1.y - MMI_width/2),(path1.x + MMI_length , path1.y + MMI_width/2) , **ld_NWG)
     top_cell.add(rect)
+    rect = gdspy.Rectangle((path1.x - 5, path1.y - MMI_width/2 -5 ),(path1.x + MMI_length + 5 , path1.y + MMI_width/2 + 5) , **ld_taperMark)
+    top_cell.add(rect)
     
     x_1 = path1.x
     yT = y + MMI_width/2 - diss_edge - (Width_WG + Brad)/2
@@ -224,6 +226,8 @@ def MMI (B_length = 1000 , Brad_length = 200 , Brad = 0.3 , MMI_length = 15 , MM
         path5 = gdspy.Path(width = Width_WG ,initial_point = (x , y))
         path5.segment(length = A_length , direction = "+x" , **ld_TNR)
         path5.arc(radius = 10, initial_angle = a2r(270),final_angle = a2r(360),final_width = 8,**ld_TNR)
+        rect = gdspy.Rectangle((path5.x - 12,path5.y), (path5.x + 12 , path5.y + 12) , **ld_TNR)
+        top_cell.add(rect)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA1 , info_M = ld_METAL2 , l_via = 0.26 , dis_from_edge = 0.15 , Col = 40 , Row = 20 , MN = 2)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA2 , info_M = ld_METAL3 , l_via = 0.5 , dis_from_edge = 0.5 , Col = 20 , Row = 10 , MN = 3)
         
@@ -247,6 +251,8 @@ def MMI (B_length = 1000 , Brad_length = 200 , Brad = 0.3 , MMI_length = 15 , MM
         path5 = gdspy.Path(width = Width_WG ,initial_point = (x , y))
         path5.segment(length = A_length , direction = "+x" , **ld_TNR)
         path5.arc(radius = 10, initial_angle = a2r(270),final_angle = a2r(360),final_width = 8,**ld_TNR)
+        rect = gdspy.Rectangle((path5.x - 12,path5.y), (path5.x + 12 , path5.y + 12) , **ld_TNR)
+        top_cell.add(rect)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA1 , info_M = ld_METAL2 , l_via = 0.26 , dis_from_edge = 0.15 , Col = 40 , Row = 20 , MN = 2)
         Via(x_i = path5.x  , y_i = path5.y + 1 , info_l = ld_VIA2 , info_M = ld_METAL3 , l_via = 0.5 , dis_from_edge = 0.5 , Col = 20 , Row = 10 , MN = 3)
         
@@ -263,31 +269,31 @@ def MMI (B_length = 1000 , Brad_length = 200 , Brad = 0.3 , MMI_length = 15 , MM
     return([path2.x , path2.y , path3.x , path3.y])
     
 # first
-[x1 , y1 , x0 , y0] = MMI( S_length = 2000 , S_height = 400 , Metal = 1)
+[x1 , y1 , x0 , y0] = MMI( S_length = 3000 , S_height = 400 , Metal = 1)
 
 #seond Top
-[x11 , y11 , x10 ,y10 ] = MMI (x = x1 , y = y1 ,B_length = 100 , Metal = 1)
+[x11 , y11 , x10 ,y10 ] = MMI (x = x1 , y = y1 ,B_length = 100 ,S_length = 2000 , S_height = 200 , Metal = 1)
 
 #second Bottom
-[x01 , y01 , x00 ,y00 ] = MMI (x = x0 , y = y0 ,B_length = 100 , Metal = 1)
+[x01 , y01 , x00 ,y00 ] = MMI (x = x0 , y = y0 ,B_length = 100 ,S_length =2000 , S_height = 200 , Metal = 1)
 
-'''
+
 #third highest
-[x111 , y111 , x110 ,y110 ] = MMI ( Metal = 1)
+[x111 , y111 , x110 ,y110 ] = MMI ( x = x11 , y = y11 , S_height = 120 ,S_length = 125,B_length = 5, A_length = 200 , Metal = 1)
 
 #third Mid Top
-[x101 , y101 , x100 ,y100 ] = MMI (  Metal = 1)
+[x101 , y101 , x100 ,y100 ] = MMI ( x = x10 , y = y10 , S_height = 120 ,S_length = 125,B_length = 5, A_length = 200 , Metal = 1)
 
 #third Mid Bottom
-[x011 , y011 , x010 ,y010 ] = MMI ( Metal = 1)
+[x011 , y011 , x010 ,y010 ] = MMI ( x = x01 , y = y01 , S_height = 120 ,S_length = 125,B_length = 5, A_length = 200 , Metal = 1)
 
 #third Lowest
-[x001 , y001 , x000 ,y000 ] = MMI ( Metal = 1)
-
-'''
+[x001 , y001 , x000 ,y000 ] = MMI ( x = x00 , y = y00 , S_height = 120 ,S_length = 125,B_length = 5, A_length = 200 , Metal = 1)
 
 
-lib.write_gds('MMI_1X4.gds')
+
+
+lib.write_gds('MMI_1X8.gds')
 
 
 
