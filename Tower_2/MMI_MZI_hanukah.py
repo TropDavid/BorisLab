@@ -194,32 +194,29 @@ def a2r(ang):  # angle to radian
 
 
 
-def MZI (x = 0,y = 0,my_length = 4800 ,B_length = 500, A_length = 500 , Taper_length = 200, Taper_Width = 0.15 , Width_WG = 1
-         ,Hight_in_S = 15 , length_of_S = 300 , Straight_in_MZ = 500 , diff_in_path = 900, Rad = 100 ):
+def MZI (x = 0,y = 0,my_length = 4800 ,B_length = 500, Brad_length = 20 , Brad = 0.3 , A_length = 500 , Taper_length = 0, Taper_Width = 0.15 , Width_WG = 1
+         ,Hight_in_S = 15 , length_of_S = 300 , Straight_in_MZ = 500 , diff_in_path = 900, Rad = 100 , MMI_length = 15 , MMI_width = 5 , diss_edge = 0.5):
     
     Straight_in_Extra = diff_in_path - 4*Rad
-    F_braodening = Width_WG*2 + 0.25 #0.25 is the minimum in Tower
+    #F_braodening = Width_WG*2 + 0.25 #0.25 is the minimum in Tower
     
-    path1 = gdspy.Path(Taper_Width , (x,y))
-    path11 = gdspy.Path(3 , (x,y))
+    path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
+    path1.segment(length = B_length , direction ="+x" , **ld_NWG)
+    path1.segment(length = Brad_length , direction ="+x" , final_width = Width_WG + Brad , **ld_NWG)
     
-    path1.segment(length = Taper_length,direction = "+x",final_width = Width_WG,**ld_NWG)
-    path11.segment(length = Taper_length,direction = "+x",**ld_taperMark)
+    rect = gdspy.Rectangle((path1.x , path1.y - MMI_width/2),(path1.x + MMI_length , path1.y + MMI_width/2) , **ld_NWG)
+    top_cell.add(rect)
     
-    path1.segment(length = B_length , direction = "+x" , final_width = F_braodening,**ld_NWG)
+    rect = gdspy.Rectangle((path1.x - 5 , path1.y - MMI_width/2 - 5),(path1.x + MMI_length + 5 , path1.y + MMI_width/2 + 5) , **ld_taperMark)
+    top_cell.add(rect)
     
-    
-    
-    x = path1.x
-    y = path1.y
-    
-    
-    rect = gdspy.Rectangle((x - 10,y - 2), (x + 10, y + 2),**ld_taperMark)
-    top_cell.add(rect) 
+    x_1 = path1.x
+    yT = y + MMI_width/2 - diss_edge - (Width_WG + Brad)/2
+    yB = y - MMI_width/2 + diss_edge + (Width_WG + Brad)/2
     
     
-    path2 = gdspy.Path(Width_WG , (x,y + 0.625))
-    path3 = gdspy.Path(Width_WG , (x,y - 0.625 - height_in_S/2))
+    path2 = gdspy.Path(Width_WG , (x_1,yT))
+    path3 = gdspy.Path(Width_WG , (x_1,yB - height_in_S/2))
     
     path2 = sbendPath(wgsbend = path2,L = length_of_S,H = height_in_S ,info = ld_NWG)
     path3 = sbendPathM(wgsbend = path3,L = length_of_S,H = height_in_S ,info = ld_NWG)
@@ -267,28 +264,65 @@ def MZI (x = 0,y = 0,my_length = 4800 ,B_length = 500, A_length = 500 , Taper_le
     path6 = sbendPathM(wgsbend = path6,L = length_of_S,H = height_in_S ,info = ld_NWG)
     path3 = sbendPath(wgsbend = path3,L = length_of_S,H = height_in_S ,info = ld_NWG)
     
+    [xT,yT] = MMI2X1(Brad_length = 20 , Brad = 0.3 , MMI_length = 15 , MMI_width = 5 , diss_edge = 0.5, Width_WG = 1 , x = path3.x , y = path3.y , ld_NWG = ld_NWG , Place = 0)
     
-    rect = gdspy.Rectangle((path3.x - 10,path3.y + 0.625 - 2), (path3.x + 10, path3.y+ 0.625 + 2),**ld_taperMark)
-    top_cell.add(rect) 
+   
     
-    path4 = gdspy.Path(2*Width_WG + 0.25, (path3.x , path3.y + 0.625))
-    path4.segment(length = A_length , direction = "+x" , final_width = Width_WG , **ld_NWG)
-    
-    xT = path4.x
-    yT = path4.y
-    
-    path5 = gdspy.Path(3 , (xT,yT))
-    path5.segment(length = Taper_length , direction = "+x" , **ld_taperMark)
+    path5 =gdspy.Path(Width_WG , (xT,yT))
+    path5.segment(length = 1000 , direction = "+x" , **ld_NWG)
     
     top_cell.add(path1)
-    top_cell.add(path11)
+    #top_cell.add(path11)
     top_cell.add(path2)
     top_cell.add(path3)
-    top_cell.add(path4)
+    #top_cell.add(path4)
     top_cell.add(path5)
     top_cell.add(path6)
     top_cell.add(path7)
     top_cell.add(path8)
+
+
+def MMI2X1 ( Brad_length = 20 , Brad = 0.3 , MMI_length = 15 , MMI_width = 5 , diss_edge = 0.5, Width_WG = 1 , x = 0 , y = 0 , ld_NWG = ld_NWG , Place = 1):
+    
+    Center = (MMI_width - 2*diss_edge - 2*(Width_WG + Brad) + Brad )/2 + y
+    diff_in_WG = (Center - y) * 2 + Width_WG
+    
+    if(Place == 0): 
+      yT = y + diff_in_WG 
+      yB = y
+      
+    if(Place == 1):
+      yT = y
+      yB = y - diff_in_WG
+      
+    
+    path2 = gdspy.Path( width = Width_WG ,initial_point = (x,yT))
+    #path2.segment(length = B_length , direction ="+x" , **ld_NWG)
+    path2.segment(length = Brad_length , direction ="+x" , final_width = Width_WG + Brad , **ld_NWG)
+    
+    
+    path3 = gdspy.Path( width = Width_WG  ,initial_point = (x ,yB))
+    #path3.segment(length = B_length , direction ="+x" , **ld_NWG)
+    path3.segment(length = Brad_length , direction ="+x" , final_width = Width_WG + Brad , **ld_NWG)
+    
+    
+    rect = gdspy.Rectangle((path3.x , Center + Width_WG/2 - MMI_width/2 ),(path2.x + MMI_length , Center + Width_WG/2 + MMI_width/2 ), **ld_NWG)
+    top_cell.add(rect)
+    rect = gdspy.Rectangle((path3.x  - 5, Center + Width_WG/2 - MMI_width/2 - 5 ),(path2.x + MMI_length + 5  , Center + Width_WG/2 + MMI_width/2  + 5), **ld_taperMark)
+    top_cell.add(rect)
+    
+    path1 = gdspy.Path( width = Width_WG + Brad ,initial_point = (path2.x + MMI_length,Center + Width_WG/2))
+    path1.segment(length = Brad_length , direction ="+x" , final_width = Width_WG , **ld_NWG)
+    #path1.segment(length = A_length , direction ="+x" , **ld_NWG)
+    
+    
+    
+    top_cell.add(path1)
+    top_cell.add(path2)
+    top_cell.add(path3)
+    
+    return([path1.x , path1.y ])
+
 
 
 
@@ -300,6 +334,9 @@ def MMI (B_length = 100 , Brad_length = 20 , Brad = 0.3 , MMI_length = 15 , MMI_
     path1.segment(length = Brad_length , direction ="+x" , final_width = Width_WG + Brad , **ld_NWG)
     
     rect = gdspy.Rectangle((path1.x , path1.y - MMI_width/2),(path1.x + MMI_length , path1.y + MMI_width/2) , **ld_NWG)
+    top_cell.add(rect)
+    
+    rect = gdspy.Rectangle((path1.x - 5 , path1.y - MMI_width/2 - 5),(path1.x + MMI_length + 5 , path1.y + MMI_width/2 + 5) , **ld_taperMark)
     top_cell.add(rect)
     
     x_1 = path1.x
