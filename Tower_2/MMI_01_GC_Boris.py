@@ -88,7 +88,7 @@ def grating(period, number_of_teeth, fill_frac, width, position, direction, lda=
                                            (position[0] - 0.5 * focus_width, position[1])]))
         p.fracture()
         circle = gdspy.Round((position[0],position[1]+25), 30, tolerance=0.01,**ld_Silox)
-        Rec = gdspy.Rectangle((position[0] - 15,position[1]+25 -15 ), (position[0] +15,position[1]+25 + 15))
+        Rec = gdspy.Rectangle((position[0] - 15,position[1]+25 -15 ), (position[0] +15,position[1]+25 + 20))
         bound = gdspy.Round((position[0],position[1]+25), 30, tolerance=0.01,**ld_GC )
 
     if direction == '-x':
