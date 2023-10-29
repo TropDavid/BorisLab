@@ -326,7 +326,7 @@ def rotateShift(fromCell,toCell,position=(0,0)):
 
 ############################### Main Routine
 
-top_cell = gdspy.Cell("topcell")
+top_cell = gdspy.Cell("TOP")
 
 GC1 = gdspy.Cell("gc1")
 
@@ -352,23 +352,23 @@ GC1 = gdspy.Cell("gc1")
 GC2 = gdspy.Cell("gc2")
 
 # grating coupler test
-period_array=np.linspace(1.1,1.2,11)
-FF_array=np.linspace(0.35,0.45,11)
+period_array=np.linspace(1.1,1.2,10)
+FF_array=np.linspace(0.35,0.45,2)
 
 
-for k in range(int(len(period_array)/2)):
+for k in range(int(len(period_array)-1)):
     for j in range(len(FF_array)):
-        GC2.add(gdspy.CellArray(GC_test(period=period_array[k*2],fill_frac=FF_array[j],
-            position=(k*600,j*350), **ld_NWG), columns=1, rows=1, spacing=(1,1), rotation=0,origin=(0, +0)))
+        GC2.add(gdspy.CellArray(GC_test(period=period_array[k],fill_frac=FF_array[j],
+            position=(k*550,j*350), **ld_NWG), columns=1, rows=1, spacing=(1,1), rotation=0,origin=(0, +0)))
       
         # GC2.add(gdspy.CellArray(GC_test(period=period_array[k*2+1],fill_frac=FF_array[j],position=(k*600+128*2,j*350)), columns=1, rows=1, spacing=(1,1), rotation=0, origin=(0, +0)))
 
 
-top_cell.add(gdspy.CellReference(GC2, (8000,3000)))
+top_cell.add(gdspy.CellReference(GC2, (0000,1200)))
 
 
 
-MMIL_array=np.linspace(60,80,21)
+MMIL_array=np.linspace(60,80,8)
 MMItw_array=np.linspace(1.2,1.4,2)
 
 MMITW_array=np.linspace(0.3,0.4,11)
@@ -384,8 +384,8 @@ for k in range(int(len(MMIL_array))):
     R = -1
     for j in range(int(len(MMItw_array))):
         R = R + 1
-        MMI2x2Cell.add(gdspy.CellReference(MMI2x2_test(period=1.15,fill_frac=0.41,MMIW=9,MMISeparate=3.15,MMILength=MMIL_array[k],taperW=MMItw_array[j],position=(k*600,(j)*700), **ld_NWG , C = C , R = R), (0, 0)))
-        #MMI2x2Cell.add(gdspy.CellReference(MMI2x2_test(period=1.15,fill_frac=0.41,MMIW=6,MMISeparate=2.15,MMILength=MMIL_array1[k],taperW=MMItw_array1[j],position=(k*600,(j+2)*700), **ld_NWG , C = C , R = R), (0, 0)))
+        MMI2x2Cell.add(gdspy.CellReference(MMI2x2_test(period=1.15,fill_frac=0.41,MMIW=9,MMISeparate=3.15,MMILength=MMIL_array[k],taperW=MMItw_array[j],position=(k*600,(j)*500), **ld_NWG , C = C , R = R), (0, 0)))
+       # MMI2x2Cell.add(gdspy.CellReference(MMI2x2_test(period=1.15,fill_frac=0.41,MMIW=6,MMISeparate=3.15,MMILength=MMIL_array1[k],taperW=MMItw_array1[j],position=(k*600,(j+2)*700), **ld_NWG , C = C , R = R), (0, 0)))
 
       
 # top_cell.add(gdspy.CellReference(MMI2x2Cell, (0,0)))
