@@ -83,8 +83,8 @@ def Via (x_i = 0,y_i = 0,info_l = ld_VIA1 , info_M = ld_METAL2, l_via = 0.26 , d
 
 
 
-chip_length = 10000 #microns
-Chip_Height = 10000 #microns
+chip_length = 4800 #microns
+Chip_Height = 4800 #microns
 Spacing_length_at_start = 0
 Spacing_Height_at_start = 0
 Taper_length = 100
@@ -162,21 +162,16 @@ for k  in range(0,len(Width_WG)):
                     pathM1.turn(Radius,"ll",**ld_TNR)
                     pathM1.segment((Spacing_Ring_Waveguide + Radius)/2 , "+x",**ld_TNR)
                     
-                    pathM2.segment((Spacing_Ring_Waveguide + Radius)/2 , "+x",**ld_TNR)
-                    pathM2.arc(radius = Radius , initial_angle = a2r(90) , final_angle = a2r(45) , **ld_TNR)
                     
-                    pathM3.segment((Spacing_Ring_Waveguide + Radius)/2 , "-x",**ld_TNR)
-                    pathM3.arc(radius = Radius , initial_angle = a2r(90) , final_angle = a2r(135) , **ld_TNR)
                     
                     pathM4.segment((Spacing_Ring_Waveguide + Radius)/2 , "+x",**ld_TNR)
-                    pathM4.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(315) , **ld_TNR)
+                    pathM4.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(350) , **ld_TNR)
                     
                     pathM5.segment((Spacing_Ring_Waveguide + Radius)/2 , "-x",**ld_TNR)
-                    pathM5.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(225) , **ld_TNR)
+                    pathM5.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(190) , **ld_TNR)
                     
-                    stam = gdspy.boolean(pathM1,pathM2,"not",**ld_TNR)
-                    stam = gdspy.boolean(stam,pathM3,"not",**ld_TNR)
-                    stam = gdspy.boolean(stam,pathM4,"not",**ld_TNR)
+                    
+                    stam = gdspy.boolean( pathM1,pathM4,"not",**ld_TNR)
                     stam = gdspy.boolean(stam,pathM5,"not",**ld_TNR)
                     
                     pathMR = gdspy.Path(Width_Waveguide , (x + Radius + (Spacing_Ring_Waveguide + Radius)/2 , y + gap[i]  + Width_Waveguide + Radius))
@@ -205,16 +200,14 @@ for k  in range(0,len(Width_WG)):
                     
                     pathM1.arc( radius = Radius, initial_angle = a2r(270) ,final_angle = a2r(630) , **ld_TNR)
                     
-                    pathM2.arc(radius = Radius , initial_angle = a2r(90) , final_angle = a2r(45) , **ld_TNR)
-                    pathM3.arc(radius = Radius , initial_angle = a2r(90) , final_angle = a2r(135) , **ld_TNR)
-                    
-                    pathM4.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(315) , **ld_TNR)
-                    pathM5.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(225) , **ld_TNR)
                     
                     
-                    stam = gdspy.boolean(pathM1,pathM2,"not",**ld_TNR)
-                    stam = gdspy.boolean(stam,pathM3,"not",**ld_TNR)
-                    stam = gdspy.boolean(stam,pathM4,"not",**ld_TNR)
+                    pathM4.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(350) , **ld_TNR)
+                    pathM5.arc(radius = Radius , initial_angle = a2r(270) , final_angle = a2r(190) , **ld_TNR)
+                    
+                    
+                    
+                    stam = gdspy.boolean(pathM1,pathM4,"not",**ld_TNR)
                     stam = gdspy.boolean(stam,pathM5,"not",**ld_TNR)
                     
                     pathMR = gdspy.Path(Width_Waveguide , (x + Radius , y + gap[i]  + Width_Waveguide + Radius))
