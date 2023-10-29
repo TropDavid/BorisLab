@@ -197,8 +197,8 @@ def a2r(ang):  # angle to radian
 
 
 
-def MMI (B_length = 100 , Brad_length = 100 , Brad = 0.3 , MMI_length = 15 , MMI_width = 5 , diss_edge = 0.5 
-         ,A_length = 1350 , S_length = 1000 , S_height = 150 , Width_WG = Width_WG , x = 0 , y = 0 , Metal = 0 , start = 0 , final = 0):
+def MMI (B_length = 100 , Brad_length = 200 , Brad = 0.3 , MMI_length = 15 , MMI_width = 5 , diss_edge = 0.5 
+         ,A_length = 430 , S_length = 1000 , S_height = 150 , Width_WG = Width_WG , x = 0 , y = 0 , Metal = 0 , start = 0 , final = 0):
     
     path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
     if ( start == 1):
@@ -292,17 +292,15 @@ def MMI (B_length = 100 , Brad_length = 100 , Brad = 0.3 , MMI_length = 15 , MMI
     return([path2.x , path2.y , path3.x , path3.y])
     
 # first
-[x1 , y1 , x0 , y0] = MMI( S_length = 800 , S_height = 400 , Metal = 1 , start = 1 )
+[x1 , y1 , x0 , y0] = MMI( S_length = 1000 , S_height = 700 , Metal = 1 , start = 1 )
 
 #seond Top
-[x11 , y11 , x10 ,y10 ] = MMI (x = x1 , y = y1 ,B_length = 0 ,S_length = 500 , S_height = 200 , Metal = 1 , final = 1)
+[x11 , y11 , x10 ,y10 ] = MMI (x = x1 , y = y1 ,B_length = 0 ,S_length = 700 , S_height = 350 , Metal = 1)
 
 #second Bottom
-[x01 , y01 , x00 ,y00 ] = MMI (x = x0 , y = y0 ,B_length = 0 ,S_length = 500 , S_height = 200 , Metal = 1 , final = 1)
+[x01 , y01 , x00 ,y00 ] = MMI (x = x0 , y = y0 ,B_length = 0 ,S_length = 700 , S_height = 350 , Metal = 1)
 
 
-
-'''
 #third highest
 [x111 , y111 , x110 ,y110 ] = MMI ( x = x11 , y = y11 , S_height = 200 ,S_length = 300,B_length = 0, Metal = 1, final = 1)
 
@@ -315,12 +313,10 @@ def MMI (B_length = 100 , Brad_length = 100 , Brad = 0.3 , MMI_length = 15 , MMI
 #third Lowest
 [x001 , y001 , x000 ,y000 ] = MMI ( x = x00 , y = y00 , S_height = 200 ,S_length = 300,B_length = 0 , Metal = 1, final = 1)
 
-'''
 
 
 
-
-lib.write_gds('MMI_1X4.gds')
+lib.write_gds('MMI_1X8.gds')
 
 
 
