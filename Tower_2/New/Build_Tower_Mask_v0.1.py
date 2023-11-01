@@ -24,6 +24,7 @@ ld_ABLB = {"layer": 118, "datatype": 53}
 ld_PHMMI = {"layer": 118, "datatype": 164}
 
 ld_dataExtend = {"layer": 118, "datatype": 134}
+ld_mmiMark = {"layer": 118, "datatype": 164}
 
 
 

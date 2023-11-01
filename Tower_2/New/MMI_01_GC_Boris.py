@@ -30,6 +30,7 @@ ld_Silox = {"layer": 9, "datatype": 0}
 ld_taper = {"layer": 8, "datatype": 0}
 ld_GC = {"layer": 118, "datatype": 121}
 ld_taperMark = {"layer": 118, "datatype": 120}
+ld_mmiMark = {"layer": 118, "datatype": 164}
 
 
 
@@ -146,7 +147,7 @@ def MMI2x2(x0=0,y0=0,w0=0.8,MMILength=60,MMIW=9,MMISeparate=3,taperL=10, taperW=
 
     MMI=gdspy.Rectangle((0,0), (MMIW,MMILength), layer=layer,datatype=datatype)
     MMI.translate(x0-MMIW/2,y0-MMILength/2)
-    MMI2=gdspy.Rectangle((-5,-5), (MMIW +5,MMILength + 5), **ld_taperMark)
+    MMI2=gdspy.Rectangle((-5,-5), (MMIW +5,MMILength + 5), **ld_mmiMark)
     MMI2.translate(x0-MMIW/2,y0-MMILength/2)
     MMICell.add([MMI,MMI2,port1,port2,port3,port4])
     return [MMICell, ports]

@@ -66,7 +66,7 @@ top_cell.add([ borderR,borderL,VGL,VGR ])
 
 filenames=('MMI_1X8.gds',"MMI_hanukah.gds")
 cell_names=('MMI_1x8','MMI_hanukah')
-cell_coord=((-2500,800),(-2500,-1500))
+cell_coord=((-2500,900),(-2500,-1600))
 
 print(len(filenames))
 for n in range(0,len(filenames)):
