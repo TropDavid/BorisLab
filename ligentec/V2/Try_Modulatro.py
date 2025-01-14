@@ -10,6 +10,10 @@ import uuid
 
 
 ld_X1 = {"layer": 2,    "datatype": 0} # 800 Nitride
+ld_P1P = {"layer": 30 , "datatype":0} # Heater to X1 layer
+ld_Via = {"layer": 31 , "datatype":0} # Via to Heater (7X7 of 0.36)
+ld_P1R = {"layer": 32 , "datatype":0} # Metal layer to the X1 Heater
+ld_P1Pad = {"layer": 33 , "datatype":0}
 ld_X3 = {"layer":70 , "datatype":0} # 350 Nitride
 ld_LNAP = {"layer": 301,    "datatype": 0} # LN Path
 ld_LNAX = {"layer":302 , "datatype": 4} # LN Not 
@@ -62,7 +66,21 @@ Taper_Length = 400
 Overlap_Length = 5
 MMI_Length = 220
 radius_bend = 100
+side = 0.36
+dis = 0.35
 
+
+
+def ViaAndPad(x = 0, y = 0,S = -1):
+    k = S*(-1)
+    x = x - k*(4 + 7*side +6*dis)/2
+    cell.add(gdspy.Rectangle((x,y), (x +( 4 + 7*side +6*dis)*k , y + ( 4 + 7*side +6*dis)*k),**ld_P1P))
+    cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (4 + 7*side +6*dis + 2)*k , y + (4 + 7*side +6*dis + 30)*k ),**ld_P1R))
+    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (4 + 7*side +6*dis + 1)*k , y  +( 4 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
+    
+    for i in range(7):
+        for j in range(7):
+            cell.add(gdspy.Rectangle((x + (2 + (side+dis)*j)*k,y +( 2 + (side+dis)*i)*k), (x + (2 + (side+dis)*j + side)*k  , y + (2 + (side+dis)*i+ side)*k),**ld_Via))
 
 def sbendPath(wgsbend,L=100,H=50,info = ld_X1):
 # the formula for cosine-shaped s-bend is: y(x) = H/2 * [1- cos(xpi/L)]
@@ -161,6 +179,41 @@ pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
 pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
 pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
 
+########################################################################################Heaters#########################################################################
+pathHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
+pathHTop.turn(radius = radius_bend , angle = 'l' ,**ld_P1P)
+pathHTop.turn(radius = radius_bend , angle = -np.pi , **ld_P1P)
+pathHTop.turn(radius = radius_bend , angle = 'l' , **ld_P1P)
+
+pathBackHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
+pathBackHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(-180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+pathFrontHTop = gdspy.Path(width = 2 , initial_point=(pathHTop.x,pathHTop.y))
+pathFrontHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+pathHBottom = gdspy.Path(width =2 ,initial_point= (pathBottom.x,pathBottom.y))
+pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
+pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
+pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
+pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+
+
+pathBackHBottom = gdspy.Path(width = 2 , initial_point=(pathBottom.x,pathBottom.y))
+pathBackHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+pathFrontkHBottom = gdspy.Path(width = 2 , initial_point=(pathHBottom.x,pathHBottom.y))
+pathFrontkHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+ViaAndPad(pathBackHTop.x,pathBackHTop.y,-1)
+ViaAndPad(pathFrontHTop.x,pathFrontHTop.y,-1)
+ViaAndPad(pathBackHBottom.x,pathBackHBottom.y,1)
+ViaAndPad(pathFrontkHBottom.x,pathFrontkHBottom.y,1)
+
+
+cell.add([pathHTop,pathHBottom , pathBackHTop ,pathFrontHTop , pathBackHBottom , pathFrontkHBottom ])
+#########################################################################################################################################################################
+
 pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
 pathTop.turn(radius = radius_bend , angle = -np.pi , **ld_X1)
 pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
@@ -170,6 +223,8 @@ pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
 pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
 pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
 pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+
+
 
 pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
@@ -193,7 +248,25 @@ FlexPath.arc(radius = 100, initial_angle = a2r(-90), final_angle = a2r(-180))
 FlexPath.segment(end_point = (0,250) ,width = (70,70,70) , offset = (-150,0,150) , relative = True)
 cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  + 50, S_y + 100 + 330),**ld_LNARFP))
 cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFP))
+vertics = [
+    (Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230),
+    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 230),
+    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 25, S_y + 100 + 200),
+    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 - 25, S_y + 100 + 200)
+    ]
+cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
+
 cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 +150 - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFP))
+vertics = [
+    (Left_Electrode_x - Overlap_Length*4 - 100 + 150  - 50, S_y + 100 + 230),
+    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 + 50, S_y + 100 + 230),
+    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 + 25, S_y + 100 + 200),
+    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 - 25, S_y + 100 + 200)
+    ]
+cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
+
+
+
 
 cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100  - 50, S_y + 100 +230), (Left_Electrode_x - Overlap_Length*4 - 100  + 50, S_y + 100 + 330),**ld_LNARFPAD))
 cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
@@ -207,7 +280,24 @@ FlexPath1.arc(radius = 100, initial_angle = a2r(-90), final_angle = a2r(0))
 FlexPath1.segment(end_point = (0,250) ,width = (70,70,70) , offset = (-150,0,150) , relative = True)
 cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  + 50, S_y + 100 + 330),**ld_LNARFP))
 cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFP))
+vertics = [
+    (Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230),
+    (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 230),
+    (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 25, S_y + 100 + 200),
+    (Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 25, S_y + 100 + 200)
+    ]
+cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
+
 cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 + 150 - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFP))
+vertics = [
+    (Right_Electrode_x + Overlap_Length*4 + 100 + 150  - 50, S_y + 100 + 230),
+    (Right_Electrode_x + Overlap_Length*4 + 100  + 150 + 50, S_y + 100 + 230),
+    (Right_Electrode_x + Overlap_Length*4 + 100  + 150 + 25, S_y + 100 + 200),
+    (Right_Electrode_x + Overlap_Length*4 + 100 + 150  - 25, S_y + 100 + 200)
+    ]
+cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
+
+
 
 cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  + 50, S_y + 100 + 330),**ld_LNARFPAD))
 cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
