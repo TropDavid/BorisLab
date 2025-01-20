@@ -41,6 +41,8 @@ MMI_1X2=lib.cells['ligentecMMI1x2BB']
 # the overall width of the BB is 156 and length is 10,752 
 GSGM=lib.cells['ligentecLNA15ModulatorPushPullCbandLongBB'] 
 
+C_S = lib.cells['Stam']
+C_E = lib.cells['Stam-end']
 ############################################################################################################################################
 #  50 micron from CHS layer if less then 100 from CSL and 10 if its more
 #  X1 width 0.2 , dis 0.3
@@ -140,7 +142,6 @@ def a2r(ang):  # angle to radian
     return np.pi/180*ang
 
 
-
 cell.add(gdspy.CellReference(Taper_end, (400,0) , rotation = 180))
 path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - Overlap_Length ,0))
 path1.segment(length = 1000 , direction = "+x" , **ld_X1)
@@ -166,9 +167,9 @@ G_Top_y = 23 + 25
 G_Bottom_y = -23 - 25
 S_y = 0
 ##############################################################################################################
-
+cell.add(gdspy.CellReference(C_S, (pathTop.x ,path1.y)))
 cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,path1.y)))
-
+cell.add(gdspy.CellReference(C_E, (pathTop.x-2*Overlap_Length + 10752 ,path1.y)))
 
 pathTop.x = pathTop.x + 10752 - Overlap_Length 
 pathBottom.x = pathBottom.x + 10752 - Overlap_Length 
@@ -242,73 +243,6 @@ cell.add(path1)
 cell.add(pathTop)
 cell.add(pathBottom)
 
-#########################################################################################################################################################################################
-FlexPath = gdspy.FlexPath(points = [(Left_Electrode_x + Overlap_Length ,S_y),(Left_Electrode_x - Overlap_Length*4 , S_y)], width = [50, 30 , 50] , offset = 48 , **ld_LNARFP)
-FlexPath.arc(radius = 100, initial_angle = a2r(-90), final_angle = a2r(-180))
-FlexPath.segment(end_point = (0,250) ,width = (70,70,70) , offset = (-150,0,150) , relative = True)
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  + 50, S_y + 100 + 330),**ld_LNARFP))
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFP))
-vertics = [
-    (Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230),
-    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 230),
-    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 25, S_y + 100 + 200),
-    (Left_Electrode_x - Overlap_Length*4 - 100  - 150 - 25, S_y + 100 + 200)
-    ]
-cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
-
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 +150 - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFP))
-vertics = [
-    (Left_Electrode_x - Overlap_Length*4 - 100 + 150  - 50, S_y + 100 + 230),
-    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 + 50, S_y + 100 + 230),
-    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 + 25, S_y + 100 + 200),
-    (Left_Electrode_x - Overlap_Length*4 - 100  + 150 - 25, S_y + 100 + 200)
-    ]
-cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
-
-
-
-
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100  - 50, S_y + 100 +230), (Left_Electrode_x - Overlap_Length*4 - 100  + 50, S_y + 100 + 330),**ld_LNARFPAD))
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 - 150  - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
-cell.add(gdspy.Rectangle((Left_Electrode_x - Overlap_Length*4 - 100 +150 - 50, S_y + 100 + 230), (Left_Electrode_x - Overlap_Length*4 - 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
-
-
-
-
-FlexPath1 = gdspy.FlexPath(points = [(Right_Electrode_x - Overlap_Length ,S_y),(Right_Electrode_x + Overlap_Length*4 , S_y)], width = [50, 30 , 50] , offset = 48 , **ld_LNARFP)
-FlexPath1.arc(radius = 100, initial_angle = a2r(-90), final_angle = a2r(0))
-FlexPath1.segment(end_point = (0,250) ,width = (70,70,70) , offset = (-150,0,150) , relative = True)
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  + 50, S_y + 100 + 330),**ld_LNARFP))
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFP))
-vertics = [
-    (Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230),
-    (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 230),
-    (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 25, S_y + 100 + 200),
-    (Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 25, S_y + 100 + 200)
-    ]
-cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
-
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 + 150 - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFP))
-vertics = [
-    (Right_Electrode_x + Overlap_Length*4 + 100 + 150  - 50, S_y + 100 + 230),
-    (Right_Electrode_x + Overlap_Length*4 + 100  + 150 + 50, S_y + 100 + 230),
-    (Right_Electrode_x + Overlap_Length*4 + 100  + 150 + 25, S_y + 100 + 200),
-    (Right_Electrode_x + Overlap_Length*4 + 100 + 150  - 25, S_y + 100 + 200)
-    ]
-cell.add(gdspy.Polygon(vertics,**ld_LNARFP))
-
-
-
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  + 50, S_y + 100 + 330),**ld_LNARFPAD))
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 - 150  - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100  - 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
-cell.add(gdspy.Rectangle((Right_Electrode_x + Overlap_Length*4 + 100 + 150 - 50, S_y + 100 + 230), (Right_Electrode_x + Overlap_Length*4 + 100 + 150 + 50, S_y + 100 + 330),**ld_LNARFPAD))
-
-
-
-
-cell.add(FlexPath)
-cell.add(FlexPath1)
-###########################################################################################################################################################################################
 
 
 lib.write_gds('Modulator.gds')   

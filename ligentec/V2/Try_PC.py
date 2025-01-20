@@ -203,7 +203,7 @@ y_C2_B_Lowwer = pathBottom.y - 4 - 45
 
 #######################################################################################################################
 C_x = pathTop.x + 3552/2
-C_y = pathTop.y + 210/2 + 200
+C_y = pathTop.y + 210/2 + 120
 #######################################################################################################################
 
 pathTop.x = pathTop.x + 3552 - 10
@@ -273,7 +273,7 @@ for i in range(9):
      cell.add(gdspy.Rectangle((C_x+i*150 - 50,C_y - 50), (C_x+i*150 + 50 ,C_y + 50) , **ld_LNARFPAD))
      
 ############################################################################C1##############################################################################     
-pathC1_T_Upper = gdspy.Path(width = 90 , initial_point = (x_C1 - 5 , y_C1_T_Upper))
+pathC1_T_Upper = gdspy.Path(width = 90 , initial_point = (x_C1 , y_C1_T_Upper))
 pathC1_T_Upper.segment(length = 10 , direction = "+x" , **ld_LNARFP)
 pathC1_T_Upper.segment(length = 200 , direction = "+x" ,final_width = 5 , **ld_LNARFP)
 pathC1_T_Upper = sbendPath(pathC1_T_Upper , L = 300, H = C_y - pathC1_T_Upper.y , info = ld_LNARFP)
@@ -281,10 +281,10 @@ pathC1_T_Upper.segment(length = C_x - pathC1_T_Upper.x , direction = '+x' , **ld
 cell.add(pathC1_T_Upper)
 
 
-pathC1_T_Lowwer = gdspy.Path(width = 90 , initial_point = (x_C1 -5, y_C1_T_Lowwer))
+pathC1_T_Lowwer = gdspy.Path(width = 90 , initial_point = (x_C1, y_C1_T_Lowwer))
 pathC1_T_Lowwer.segment(length = 100 , direction = "+x" , **ld_LNARFP)
 
-pathC1_B_Upper = gdspy.Path(width = 90 , initial_point = (x_C1 -5, y_C1_B_Upper))
+pathC1_B_Upper = gdspy.Path(width = 90 , initial_point = (x_C1, y_C1_B_Upper))
 pathC1_B_Upper.segment(length = 100 , direction = "+x" , **ld_LNARFP)
 
 cell.add([pathC1_T_Lowwer, pathC1_B_Upper])
@@ -296,7 +296,7 @@ pathC1_Ground.turn(radius = 10 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP 
 cell.add(pathC1_Ground)
 
 
-pathC1_B_Lowwer = gdspy.Path(width = 90 , initial_point = (x_C1 - 5 , y_C1_B_Lowwer))
+pathC1_B_Lowwer = gdspy.Path(width = 90 , initial_point = (x_C1 , y_C1_B_Lowwer))
 pathC1_B_Lowwer.segment(length = 10 , direction = "+x" , **ld_LNARFP)
 pathC1_B_Lowwer.segment(length = 200 , direction = "+x" ,final_width = 5 , **ld_LNARFP)
 pathC1_B_Lowwer = sbendPath(pathC1_B_Lowwer , L = 500, H = C_y - 50 - 20 - pathC1_B_Lowwer.y , info = ld_LNARFP)
