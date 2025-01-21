@@ -24,7 +24,7 @@ ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
 
 
 lib = gdspy.GdsLibrary()
-cell =lib.new_cell('TOP')
+cell =lib.new_cell('Modulator_BIU')
 
 lib.read_gds("cells.GDS")
 
@@ -178,11 +178,11 @@ cell.add(gdspy.CellReference(padR, (pathTop.x-2*Overlap_Length + 10752+50,path1.
 cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,path1.y)))
 # cell.add(gdspy.CellReference(C_E, (pathTop.x-2*Overlap_Length + 10752 ,path1.y)))
 
-pathTop.x = pathTop.x + 10752 - Overlap_Length 
-pathBottom.x = pathBottom.x + 10752 - Overlap_Length 
+pathTop.x = pathTop.x + 10752 - Overlap_Length *2
+pathBottom.x = pathBottom.x + 10752 - Overlap_Length *2
 
-pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
-pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+pathTop.segment(length = 270 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 270 , direction = "+x" , **ld_X1)
 
 pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
 pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)

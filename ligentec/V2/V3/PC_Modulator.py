@@ -1,0 +1,314 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 19 09:58:05 2025
+
+@author: user
+"""
+
+import gdspy
+import numpy as np
+import uuid
+
+
+ld_X1 = {"layer": 2,    "datatype": 0} # 800 Nitride
+ld_P1P = {"layer": 30 , "datatype":0} # Heater to X1 layer
+ld_Via = {"layer": 31 , "datatype":0} # Via to Heater (7X7 of 0.36)
+ld_P1R = {"layer": 32 , "datatype":0} # Metal layer to the X1 Heater
+ld_P1Pad = {"layer": 33 , "datatype":0} # Heater Pad
+ld_X3 = {"layer":70 , "datatype":0} # 350 Nitride
+ld_LNAP = {"layer": 301,    "datatype": 0} # LN Path
+ld_LNAX = {"layer":302 , "datatype": 4} # LN Not 
+ld_LNASIZE = {"layer": 303 , "datatype": 0} # mark of where LN is
+ld_LNARFVIA = {"layer": 320 , "datatype": 0} # Conection between LN and Electrode
+ld_LNARFP = {"layer": 330 , "datatype": 0} # Electrode layer
+ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
+
+lib = gdspy.GdsLibrary()
+cell =lib.new_cell('PC_Controller')
+
+lib.read_gds("cells.GDS")
+
+# the notation is from left to right and the (0,0) is at the (left, middle) of the BB (So 5 overlap in required) , length of 400
+Taper_end=lib.cells['ligentecInvertedTaper_w1.0BB'] 
+
+# the notation is from left to right and the (-5,0) is at the
+# width 30 , length 220 , the 1 is at center and the 2 are at +- 12.27
+MMI_1X2=lib.cells['ligentecMMI1x2BB']
+
+
+# the notation is from left to right and the (0,0) is at the (left, middle) of the BB (So 5 overlap in required)
+# the Top and Bottom Metal are 50 width, and middle is 30 , the 2 WG are at +-19 , The Top start at 23 and the Bottom at -23
+# the overall width of the BB is 156 and length is 10,752 
+GSGM=lib.cells['ligentecLNA15ModulatorPushPullCbandLongBB'] 
+
+
+# WG at (-5,0) width 1, Contact are of width 90 at (-5,+-49)
+# The width is 210 and length 3552
+PM = lib.cells['ligentecLNA15PhaseShifterCbandShortBB']
+
+
+# WG input (-5,0) width 1 , wg Output at (515,0) and (515,-54.6)
+# length 520 and width 70
+PBS = lib.cells['ligentecPBSBB']
+
+
+
+# C_S = lib.cells['Stam']
+# C_E = lib.cells['Stam-end']
+padL=lib.cells['padL']
+padR=lib.cells['padR']
+
+############################################################################################################################################
+#  50 micron from CHS layer if less then 100 from CSL and 10 if its more
+#  X1 width 0.2 , dis 0.3
+#  X3 width 0.2 , dis 0.3
+#  LNAP width 2 , dis 5
+#  LNAP must be enclosed by LNASIZE
+#  LNARFP width 1.5, dis 3
+#  LNARFP must be enclosed by LNA by 5 , lLNA = (LNASIZE NOT LNAX) OR LNAP
+#  LNARFVIA width 3, dis 3
+#  LNARFVIA  must be enclosed by LNARFP by 5
+#  LNARFPAD width 10, dis 10
+#  LNARFPAD  must be enclosed by LNARFP by 10
+#  Dis between LNARFPAD and LNARFVIA is 10
+############################################################################################################################################
+
+Cell_Length = 15830
+Cell_Width = 4850
+
+WG_Width = 1
+G_RF_Width = 50
+S_RF_Width = 30
+Taper_Length = 400
+Overlap_Length = 5
+MMI_Length = 220
+radius_bend = 100
+PBS_Length = 520
+side = 0.36
+dis = 0.35
+
+
+def sbendPath(wgsbend,L=100,H=50,info = ld_X1):
+# the formula for cosine-shaped s-bend is: y(x) = H/2 * [1- cos(xpi/L)]
+# the formula for sine-shaped s-bend is: y(x) = xH/L - H/(2pi) * sin(x2*pi/L)
+    def sbend(t):
+        y = H/2 * (1- np.cos(t*np.pi))
+        x =L*t
+        
+        return (x,y)
+    
+    def dtsbend(t):
+        dy_dt = H/2*np.pi*np.sin(t*np.pi)
+        dx_dt = L
+
+        return (dx_dt,dy_dt)
+
+    wgsbend.parametric(sbend ,dtsbend , number_of_evaluations=100,**info)  
+    return wgsbend   
+ 
+
+def sbendPathM(wgsbend,L=100,H=50,info = ld_X1):
+
+    def sbend(t):
+        y = H/2 * (np.cos(t*np.pi))
+        x = L*t
+        
+        return (x,y)
+    
+    def dtsbend(t):
+        dy_dt =  -H/2*np.pi*np.sin(t*np.pi)
+        dx_dt = L
+
+        return (dx_dt,dy_dt )
+
+    wgsbend.parametric(sbend ,dtsbend , number_of_evaluations=100,**info)  
+    return wgsbend      
+
+
+def sbendPathMBetter(wgsbend,L=100,H=50,info = ld_X1):
+
+    def sbend(t):
+        y = -(H/2 * (1- np.cos(t*np.pi)))
+        x = L*t
+        
+        return (x,y)
+    
+    def dtsbend(t):
+        dy_dt =  -H/2*np.pi*np.sin(t*np.pi)
+        dx_dt = L
+
+        return (dx_dt,dy_dt )
+
+    wgsbend.parametric(sbend ,dtsbend , number_of_evaluations=100,**info)  
+    return wgsbend      
+
+def a2r(ang):  # angle to radian
+    return np.pi/180*ang
+
+def ViaAndPad(x = 0, y = 0,S = -1):
+    k = S*(-1)
+    x = x - k*(4 + 7*side +6*dis)/2
+    cell.add(gdspy.Rectangle((x,y), (x +( 4 + 7*side +6*dis)*k , y + ( 4 + 7*side +6*dis)*k),**ld_P1P))
+    cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (4 + 7*side +6*dis + 2)*k , y + (4 + 7*side +6*dis + 30)*k ),**ld_P1R))
+    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (4 + 7*side +6*dis + 1)*k , y  +( 4 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
+    
+    for i in range(7):
+        for j in range(7):
+            cell.add(gdspy.Rectangle((x + (2 + (side+dis)*j)*k,y +( 2 + (side+dis)*i)*k), (x + (2 + (side+dis)*j + side)*k  , y + (2 + (side+dis)*i+ side)*k),**ld_Via))
+
+def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
+    cell.add(gdspy.CellReference(MMI_1X2, (x,y)))
+
+    pathTop = gdspy.Path(width = WG_Width , initial_point = (x + MMI_Length - 10, y + 12.27))
+    pathBottom = gdspy.Path(width = WG_Width , initial_point = (x + MMI_Length - 10,y - 12.27))
+
+    pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
+    pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+
+    pathTop = sbendPath(pathTop , L = 200 , H = 19 - 12.27)
+    pathBottom = sbendPathMBetter(pathBottom , L = 200 , H = 19 - 12.27)
+
+    pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
+    pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+
+    ##############################################################################################################
+    Left_Electrode_x = pathTop.x 
+    Right_Electrode_x = pathTop.x + 10752 
+    S_y = y
+    ##############################################################################################################
+    # FlexPath = gdspy.FlexPath(points = [(Left_Electrode_x ,S_y),(Left_Electrode_x - Overlap_Length*4 - B*300 , S_y)], width = [50, 30 , 50] , offset = 48 , **ld_LNARFP)
+    
+    #  electrodes 
+    cell.add(gdspy.CellReference(padL, (Left_Electrode_x - Overlap_Length*4 - 350 , y+120)))
+    cell.add(gdspy.CellReference(padR, (Right_Electrode_x + Overlap_Length*4 + B*300+20 ,y+120)))
+
+    cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,y)))
+    
+    FlexPath1 = gdspy.FlexPath(points = [(Right_Electrode_x  - 2*Overlap_Length ,S_y),(Right_Electrode_x + Overlap_Length*4 + B*300 , S_y)], width = [50, 30 , 50] , offset = 48 , **ld_LNARFP)
+    cell.add([FlexPath1])
+    
+    pathTop.x = pathTop.x + 10752 - Overlap_Length 
+    pathBottom.x = pathBottom.x + 10752 - Overlap_Length 
+
+    pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
+    pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+
+    pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
+    pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
+    
+    pathTop.segment(length = L + 400, direction = "+x" , **ld_X1)
+    pathBottom.segment(length = L + 400 , direction = "+x" , **ld_X1)
+    ########################################################################################Heaters#########################################################################
+    pathHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
+    pathHTop.turn(radius = radius_bend , angle = 'l' ,**ld_P1P)
+    pathHTop.turn(radius = radius_bend , angle = -np.pi , **ld_P1P)
+    pathHTop.turn(radius = radius_bend , angle = 'l' , **ld_P1P)
+
+    pathBackHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
+    pathBackHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(-180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+    pathFrontHTop = gdspy.Path(width = 2 , initial_point=(pathHTop.x,pathHTop.y))
+    pathFrontHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+    pathHBottom = gdspy.Path(width =2 ,initial_point= (pathBottom.x,pathBottom.y))
+    # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+    # pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
+    # pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
+    # pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
+    # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+    pathHBottom.segment(length = pathHTop.x-pathHBottom.x , direction = "+x" , **ld_P1P)
+
+
+    pathBackHBottom = gdspy.Path(width = 2 , initial_point=(pathBottom.x,pathBottom.y))
+    pathBackHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+    pathFrontkHBottom = gdspy.Path(width = 2 , initial_point=(pathHBottom.x,pathHBottom.y))
+    pathFrontkHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+
+    ViaAndPad(pathBackHTop.x,pathBackHTop.y,-1)
+    ViaAndPad(pathFrontHTop.x,pathFrontHTop.y,-1)
+    ViaAndPad(pathBackHBottom.x,pathBackHBottom.y,1)
+    ViaAndPad(pathFrontkHBottom.x,pathFrontkHBottom.y,1)
+
+
+    cell.add([pathHTop,pathHBottom , pathBackHTop ,pathFrontHTop , pathBackHBottom , pathFrontkHBottom ])
+    #########################################################################################################################################################################
+
+    pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
+    pathTop.turn(radius = radius_bend , angle = -np.pi , **ld_X1)
+    pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
+
+    # pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+    # pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
+    # pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
+    # pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
+    # pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+    pathBottom.segment(length = pathTop.x-pathBottom.x , direction = "+x" , **ld_X1)
+
+
+
+    pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
+    pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+
+    cell.add(gdspy.CellReference(MMI_1X2, (pathTop.x + 220  - 10, y) , rotation = 180))
+
+    cell.add(pathTop)
+    cell.add(pathBottom)
+    
+    
+    return[pathBottom.x + MMI_Length - 10]
+
+
+cell.add(gdspy.CellReference(Taper_end, (400,27.3) , rotation = 180))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - Overlap_Length ,27.3))
+path1.segment(length = 50 , direction = "+x" , **ld_X1)
+
+###########################################PBS###################################################################
+cell.add(gdspy.CellReference(PBS, (path1.x,path1.y)))
+
+pathTop = gdspy.Path(width = WG_Width , initial_point = (path1.x + PBS_Length - 10, path1.y))
+pathBottom = gdspy.Path(width = WG_Width , initial_point = (path1.x + PBS_Length - 10, path1.y - 54.6))
+
+pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
+
+pathTop  = sbendPath(pathTop , L = 250 , H = (250 - 54.6)/2)
+pathBottom = sbendPathMBetter(pathBottom , L = 250 , H = (250 - 54.6)/2)
+
+pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
+cell.add(pathTop)
+cell.add(pathBottom)
+
+xTop = Mod(pathTop.x , pathTop.y , L = 0)
+pathTop.x = xTop[0]
+pathTop.segment(length = 400 , direction = "+x" , **ld_X1)
+xBottom = Mod(pathBottom.x,pathBottom.y , L = 400 , B = 1)
+pathBottom.x = xBottom[0]
+
+pathTop = sbendPathMBetter(pathTop,L = 250 , H = pathTop.y - 27.3)
+pathBottom = sbendPath(pathBottom, L = 250 , H = abs(pathBottom.y) - 27.3)
+
+pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
+
+cell.add(gdspy.CellReference(PBS, (pathBottom.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
+
+pathBottom.x = pathBottom.x + PBS_Length - 10
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 , direction = "+x" , **ld_X1)
+cell.add(gdspy.CellReference(Taper_end, (pathBottom.x,pathBottom.y)))
+
+cell.add(path1)
+cell.add(pathTop)
+cell.add(pathBottom)
+
+
+lib.write_gds('PC_Modulator.gds')   
+
+
+
+
+
+
+
+
