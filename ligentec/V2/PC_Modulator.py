@@ -77,7 +77,7 @@ C_E = lib.cells['Stam-end']
 #  Dis between LNARFPAD and LNARFVIA is 10
 ############################################################################################################################################
 
-Cell_Length = 15810
+Cell_Length = 15830
 Cell_Width = 4850
 
 WG_Width = 1
@@ -272,8 +272,8 @@ pathBottom = gdspy.Path(width = WG_Width , initial_point = (path1.x + PBS_Length
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 
-pathTop  = sbendPath(pathTop , L = 250 , H = (255 - 54.6)/2)
-pathBottom = sbendPathMBetter(pathBottom , L = 250 , H = (255 - 54.6)/2)
+pathTop  = sbendPath(pathTop , L = 250 , H = (350 - 54.6)/2)
+pathBottom = sbendPathMBetter(pathBottom , L = 250 , H = (350 - 54.6)/2)
 
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)

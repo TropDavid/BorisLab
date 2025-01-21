@@ -64,7 +64,7 @@ MMI2X2 = lib.cells['ligentecMMI2x2BB']
 #  Dis between LNARFPAD and LNARFVIA is 10
 ############################################################################################################################################
 
-Cell_Length = 15810
+Cell_Length = 15830
 Cell_Width = 4850
 
 WG_Width = 1
