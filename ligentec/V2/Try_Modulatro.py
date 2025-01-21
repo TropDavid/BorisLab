@@ -41,8 +41,8 @@ MMI_1X2=lib.cells['ligentecMMI1x2BB']
 # the overall width of the BB is 156 and length is 10,752 
 GSGM=lib.cells['ligentecLNA15ModulatorPushPullCbandLongBB'] 
 
-C_S = lib.cells['Stam']
-C_E = lib.cells['Stam-end']
+#C_S = lib.cells['Stam']
+#C_E = lib.cells['Stam-end']
 ############################################################################################################################################
 #  50 micron from CHS layer if less then 100 from CSL and 10 if its more
 #  X1 width 0.2 , dis 0.3
