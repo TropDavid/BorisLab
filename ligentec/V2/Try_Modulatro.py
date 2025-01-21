@@ -193,12 +193,12 @@ pathFrontHTop = gdspy.Path(width = 2 , initial_point=(pathHTop.x,pathHTop.y))
 pathFrontHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
 pathHBottom = gdspy.Path(width =2 ,initial_point= (pathBottom.x,pathBottom.y))
-pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
-pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
-pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
-pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
-pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
-
+# pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+# pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
+# pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
+# pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
+# pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+pathHBottom.segment(length = pathHTop.x-pathHBottom.x , direction = "+x" , **ld_P1P)
 
 pathBackHBottom = gdspy.Path(width = 2 , initial_point=(pathBottom.x,pathBottom.y))
 pathBackHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
@@ -219,12 +219,12 @@ pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
 pathTop.turn(radius = radius_bend , angle = -np.pi , **ld_X1)
 pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
 
-pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
-pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
-pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
-pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
-pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
-
+# pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+# pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
+# pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
+# pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
+# pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+pathBottom.segment(length = pathTop.x-pathBottom.x , direction = "+x" , **ld_X1)
 
 
 pathTop.segment(length = 100 , direction = "+x" , **ld_X1)

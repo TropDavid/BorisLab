@@ -213,11 +213,12 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     pathFrontHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
     pathHBottom = gdspy.Path(width =2 ,initial_point= (pathBottom.x,pathBottom.y))
-    pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
-    pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
-    pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
-    pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
-    pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+    # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+    # pathHBottom.segment(length = 100 , direction = "-y" , **ld_P1P)
+    # pathHBottom.turn(radius = radius_bend , angle = np.pi , **ld_P1P)
+    # pathHBottom.segment(length = 100 , direction = "+y" , **ld_P1P)
+    # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
+    pathHBottom.segment(length = pathHTop.x-pathHBottom.x , direction = "+x" , **ld_P1P)
 
 
     pathBackHBottom = gdspy.Path(width = 2 , initial_point=(pathBottom.x,pathBottom.y))
@@ -239,11 +240,12 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     pathTop.turn(radius = radius_bend , angle = -np.pi , **ld_X1)
     pathTop.turn(radius = radius_bend , angle = 'l' , **ld_X1)
 
-    pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
-    pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
-    pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
-    pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
-    pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+    # pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+    # pathBottom.segment(length = 100 , direction = "-y" , **ld_X1)
+    # pathBottom.turn(radius = radius_bend , angle = np.pi , **ld_X1)
+    # pathBottom.segment(length = 100 , direction = "+y" , **ld_X1)
+    # pathBottom.turn(radius = radius_bend , angle = 'r' , **ld_X1)
+    pathBottom.segment(length = pathTop.x-pathBottom.x , direction = "+x" , **ld_X1)
 
 
 
@@ -272,8 +274,8 @@ pathBottom = gdspy.Path(width = WG_Width , initial_point = (path1.x + PBS_Length
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 
-pathTop  = sbendPath(pathTop , L = 250 , H = (350 - 54.6)/2)
-pathBottom = sbendPathMBetter(pathBottom , L = 250 , H = (350 - 54.6)/2)
+pathTop  = sbendPath(pathTop , L = 250 , H = (250 - 54.6)/2)
+pathBottom = sbendPathMBetter(pathBottom , L = 250 , H = (250 - 54.6)/2)
 
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
