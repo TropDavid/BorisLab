@@ -11,10 +11,10 @@ import uuid
 
 
 ld_X1 = {"layer": 2,    "datatype": 0} # 800 Nitride
-ld_P1P = {"layer": 30 , "datatype":0} # Heater to X1 layer
-ld_Via = {"layer": 31 , "datatype":0} # Via to Heater (7X7 of 0.36)
-ld_P1R = {"layer": 32 , "datatype":0} # Metal layer to the X1 Heater
-ld_P1Pad = {"layer": 33 , "datatype":0} # Heater Pad
+ld_P1P = {"layer": 381 , "datatype":0} # Heater to X1 layer
+ld_Via = {"layer": 383 , "datatype":0} # Via to Heater (7X7 of 0.36)
+ld_P1R = {"layer": 381 , "datatype":0} # Metal layer to the X1 Heater
+ld_P1Pad = {"layer": 384 , "datatype":0}
 ld_X3 = {"layer":70 , "datatype":0} # 350 Nitride
 ld_LNAP = {"layer": 301,    "datatype": 0} # LN Path
 ld_LNAX = {"layer":302 , "datatype": 4} # LN Not 
@@ -22,6 +22,7 @@ ld_LNASIZE = {"layer": 303 , "datatype": 0} # mark of where LN is
 ld_LNARFVIA = {"layer": 320 , "datatype": 0} # Conection between LN and Electrode
 ld_LNARFP = {"layer": 330 , "datatype": 0} # Electrode layer
 ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
+
 
 lib = gdspy.GdsLibrary()
 cell =lib.new_cell('PC_Controller')
@@ -84,8 +85,8 @@ Overlap_Length = 5
 MMI_Length = 220
 radius_bend = 100
 PBS_Length = 520
-side = 0.36
-dis = 0.35
+side = 4
+dis = 4
 
 
 def sbendPath(wgsbend,L=100,H=50,info = ld_X1):
@@ -145,17 +146,21 @@ def sbendPathMBetter(wgsbend,L=100,H=50,info = ld_X1):
 def a2r(ang):  # angle to radian
     return np.pi/180*ang
 
+
+
+
+
+
 def ViaAndPad(x = 0, y = 0,S = -1):
     k = S*(-1)
     x = x - k*(4 + 7*side +6*dis)/2
-    cell.add(gdspy.Rectangle((x,y), (x +( 4 + 7*side +6*dis)*k , y + ( 4 + 7*side +6*dis)*k),**ld_P1P))
-    cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (4 + 7*side +6*dis + 2)*k , y + (4 + 7*side +6*dis + 30)*k ),**ld_P1R))
-    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (4 + 7*side +6*dis + 1)*k , y  +( 4 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
+    cell.add(gdspy.Rectangle((x,y), (x +( 8 + 7*side +6*dis)*k , y + ( 8 + 7*side +6*dis)*k),**ld_P1P))
+    cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (8 + 7*side +6*dis + 2)*k , y + (20 + 7*side +6*dis + 30)*k ),**ld_P1R))
+    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (8 + 7*side +6*dis + 1)*k , y  +( 20 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
     
     for i in range(7):
         for j in range(7):
-            cell.add(gdspy.Rectangle((x + (2 + (side+dis)*j)*k,y +( 2 + (side+dis)*i)*k), (x + (2 + (side+dis)*j + side)*k  , y + (2 + (side+dis)*i+ side)*k),**ld_Via))
-
+            cell.add(gdspy.Rectangle((x + (4 + (side+dis)*j)*k,y +( 4 + (side+dis)*i)*k), (x + (4 + (side+dis)*j + side)*k  , y + (4 + (side+dis)*i+ side)*k),**ld_Via))
 def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     cell.add(gdspy.CellReference(MMI_1X2, (x,y)))
 
@@ -205,10 +210,10 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     pathHTop.turn(radius = radius_bend , angle = 'l' , **ld_P1P)
 
     pathBackHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
-    pathBackHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(-180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+    pathBackHTop.arc(radius = 40 , initial_angle=a2r(-90) , final_angle=a2r(-180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
     pathFrontHTop = gdspy.Path(width = 2 , initial_point=(pathHTop.x,pathHTop.y))
-    pathFrontHTop.arc(radius = 20 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+    pathFrontHTop.arc(radius = 40 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
     pathHBottom = gdspy.Path(width =2 ,initial_point= (pathBottom.x,pathBottom.y))
     # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
@@ -220,10 +225,10 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
 
 
     pathBackHBottom = gdspy.Path(width = 2 , initial_point=(pathBottom.x,pathBottom.y))
-    pathBackHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+    pathBackHBottom.arc(radius = 40 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
     pathFrontkHBottom = gdspy.Path(width = 2 , initial_point=(pathHBottom.x,pathHBottom.y))
-    pathFrontkHBottom.arc(radius = 20 , initial_angle=a2r(90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+    pathFrontkHBottom.arc(radius = 40 , initial_angle=a2r(90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
 
     ViaAndPad(pathBackHTop.x,pathBackHTop.y,-1)
     ViaAndPad(pathFrontHTop.x,pathFrontHTop.y,-1)
