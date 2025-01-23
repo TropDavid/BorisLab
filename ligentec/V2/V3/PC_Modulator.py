@@ -195,8 +195,8 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     pathTop.x = pathTop.x + 10752 - Overlap_Length 
     pathBottom.x = pathBottom.x + 10752 - Overlap_Length 
 
-    pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
-    pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+    pathTop.segment(length = 100+100 , direction = "+x" , **ld_X1)
+    pathBottom.segment(length = 100+100 , direction = "+x" , **ld_X1)
 
     pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
     pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
@@ -300,8 +300,8 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathBottom.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 , direction = "+x" , **ld_X1)
-cell.add(gdspy.CellReference(Taper_end, (pathBottom.x,pathBottom.y)))
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400+ + Overlap_Length, direction = "+x" , **ld_X1)
+cell.add(gdspy.CellReference(Taper_end, (pathBottom.x-  Overlap_Length,pathBottom.y)))
 
 cell.add(path1)
 cell.add(pathTop)

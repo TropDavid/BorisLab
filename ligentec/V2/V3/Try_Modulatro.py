@@ -186,8 +186,8 @@ cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,path1.y)))
 pathTop.x = pathTop.x + 10752 - Overlap_Length *2
 pathBottom.x = pathBottom.x + 10752 - Overlap_Length *2
 
-pathTop.segment(length = 270 , direction = "+x" , **ld_X1)
-pathBottom.segment(length = 270 , direction = "+x" , **ld_X1)
+pathTop.segment(length = 270+50 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 270+50 , direction = "+x" , **ld_X1)
 
 pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
 pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
