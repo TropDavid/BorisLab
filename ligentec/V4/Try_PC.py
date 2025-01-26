@@ -269,15 +269,16 @@ cell.add(pathBottom)
 ############################################################################Contact##########################################################################
 C_x = C_x - 4*150
 for i in range(9):
-     cell.add(gdspy.Rectangle((C_x+i*150 - 50,C_y - 50), (C_x+i*150 + 50 ,C_y + 50) , **ld_LNARFP))
-     cell.add(gdspy.Rectangle((C_x+i*150 - 50,C_y - 50), (C_x+i*150 + 50 ,C_y + 50) , **ld_LNARFPAD))
+     cell.add(gdspy.Rectangle((C_x+i*150 - 55 ,C_y - 50 + 30), (C_x+i*150 + 55 ,C_y + 60 + 30) , **ld_LNARFP))
+     cell.add(gdspy.Rectangle((C_x+i*150 - 50,C_y - 45 + 30), (C_x+i*150 + 50 ,C_y + 55 + 30) , **ld_LNARFPAD))
      
 ############################################################################C1##############################################################################     
 pathC1_T_Upper = gdspy.Path(width = 90 , initial_point = (x_C1 , y_C1_T_Upper))
 pathC1_T_Upper.segment(length = 10 , direction = "+x" , **ld_LNARFP)
 pathC1_T_Upper.segment(length = 200 , direction = "+x" ,final_width = 5 , **ld_LNARFP)
-pathC1_T_Upper = sbendPath(pathC1_T_Upper , L = 300, H = C_y - pathC1_T_Upper.y , info = ld_LNARFP)
-pathC1_T_Upper.segment(length = C_x - pathC1_T_Upper.x , direction = '+x' , **ld_LNARFP)
+pathC1_T_Upper = sbendPath(pathC1_T_Upper , L = 300, H = C_y+ 35 - pathC1_T_Upper.y , info = ld_LNARFP)
+pathC1_T_Upper.segment(length = C_x - pathC1_T_Upper.x - 30 - 55 , direction = '+x' , **ld_LNARFP)
+pathC1_T_Upper.segment(length =30 , direction = '+x' , final_width= 110 , **ld_LNARFP)
 cell.add(pathC1_T_Upper)
 
 
@@ -293,6 +294,7 @@ pathC1_Ground = gdspy.Path(width = 5 , initial_point = (pathC1_B_Upper.x + 95 , 
 pathC1_Ground = sbendPath(pathC1_Ground , L = 500 - 95 - 100 , H = C_y - 50 - 10 - pathC1_Ground.y , info = ld_LNARFP)
 pathC1_Ground.segment(length = C_x + 1*150 - pathC1_Ground.x  - 10, direction = '+x' , **ld_LNARFP)
 pathC1_Ground.turn(radius = 10 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC1_Ground.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC1_Ground)
 
 
@@ -302,6 +304,7 @@ pathC1_B_Lowwer.segment(length = 200 , direction = "+x" ,final_width = 5 , **ld_
 pathC1_B_Lowwer = sbendPath(pathC1_B_Lowwer , L = 500, H = C_y - 50 - 20 - pathC1_B_Lowwer.y , info = ld_LNARFP)
 pathC1_B_Lowwer.segment(length = C_x + 2*150 - pathC1_B_Lowwer.x  - 20, direction = '+x' , **ld_LNARFP)
 pathC1_B_Lowwer.turn(radius = 20 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC1_B_Lowwer.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC1_B_Lowwer)
 
 #############################################################################C2#####################################################################################
@@ -311,6 +314,7 @@ pathC2_B_Lowwer.segment(length = 200 , direction = "-x" ,final_width = 5 , **ld_
 pathC2_B_Lowwer.arc(radius = (C_y - 50 - 30 - pathC2_B_Lowwer.y)/2 , initial_angle = a2r(-90) , final_angle = a2r(-270) , tolerance = 0.0001 , **ld_LNARFP)
 pathC2_B_Lowwer.segment(length = C_x + 3*150 - pathC2_B_Lowwer.x  - 30, direction = '+x' , **ld_LNARFP)
 pathC2_B_Lowwer.turn(radius = 30 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC2_B_Lowwer.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC2_B_Lowwer)
 
 
@@ -326,15 +330,17 @@ pathC2_Ground = gdspy.Path(width = 5 , initial_point = (pathC2_B_Upper.x - 95 , 
 pathC2_Ground.arc(radius = (C_y - 50 - 40 - pathC2_Ground.y)/2 , initial_angle = a2r(-90) , final_angle = a2r(-270) , tolerance = 0.0001 , **ld_LNARFP)
 pathC2_Ground.segment(length = C_x + 4*150 - pathC2_Ground.x  - 40, direction = '+x' , **ld_LNARFP)
 pathC2_Ground.turn(radius = 40 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC2_Ground.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC2_Ground)
 
 
 pathC2_T_Upper = gdspy.Path(width = 90 , initial_point = (x_C2 , y_C2_T_Upper))
 pathC2_T_Upper.segment(length = 10 , direction = "-x" , **ld_LNARFP)
 pathC2_T_Upper.segment(length = 200 , direction = "-x" ,final_width = 5 , **ld_LNARFP)
-pathC2_T_Upper.arc(radius = (C_y - 50 - 50 - pathC2_T_Upper.y)/2 , initial_angle = a2r(-90) , final_angle = a2r(-270) , tolerance = 0.0001 , **ld_LNARFP)
-pathC2_T_Upper.segment(length = C_x + 5*150 - pathC2_T_Upper.x  - 50, direction = '+x' , **ld_LNARFP)
-pathC2_T_Upper.turn(radius = 50 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC2_T_Upper.arc(radius = (C_y - 50 - 55 - pathC2_T_Upper.y)/2 , initial_angle = a2r(-90) , final_angle = a2r(-270) , tolerance = 0.0001 , **ld_LNARFP)
+pathC2_T_Upper.segment(length = C_x + 5*150 - pathC2_T_Upper.x  - 55, direction = '+x' , **ld_LNARFP)
+pathC2_T_Upper.turn(radius = 55 ,angle =  'l' ,tolerance = 0.00001 , **ld_LNARFP )
+pathC2_T_Upper.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC2_T_Upper)
 
 #############################################################################C3#####################################################################################
@@ -343,9 +349,10 @@ pathC3_T_Upper.segment(length = 10 , direction = "-x" , **ld_LNARFP)
 pathC3_T_Upper.segment(length = 200 , direction = "-x" ,final_width = 5 , **ld_LNARFP)
 
 pathC3_T_Upper_mid = gdspy.Path(width = 5 , initial_point = (pathC3_T_Upper.x , pathC3_T_Upper.y))
-pathC3_T_Upper_mid = sbendPath(pathC3_T_Upper_mid , L = 300, H = C_y - pathC3_T_Upper_mid.y , info = ld_LNARFP)
+pathC3_T_Upper_mid = sbendPath(pathC3_T_Upper_mid , L = 300, H = C_y + 35 - pathC3_T_Upper_mid.y , info = ld_LNARFP)
 pathC3_T_Upper_mid.mirror((pathC3_T_Upper.x,pathC3_T_Upper.y+5),(pathC3_T_Upper.x,pathC3_T_Upper.y-5))
-pathC3_T_Upper_mid.segment(length = pathC3_T_Upper_mid.x -C_x - 8*150 , direction = '-x' , **ld_LNARFP)
+pathC3_T_Upper_mid.segment(length = pathC3_T_Upper_mid.x -C_x - 8*150 - 55 - 30 , direction = '-x' , **ld_LNARFP)
+pathC3_T_Upper_mid.segment(length = 30 , direction = '-x' , final_width = 110 , **ld_LNARFP)
 cell.add(pathC3_T_Upper)
 cell.add(pathC3_T_Upper_mid)
 
@@ -365,6 +372,7 @@ pathC3_Ground = sbendPath(pathC3_Ground , L = 500 - 95 - 100 , H = C_y - 50 - 10
 pathC3_Ground.mirror((pathC3_B_Upper.x - 100,pathC3_B_Upper.y+5),(pathC3_B_Upper.x - 100,pathC3_B_Upper.y-5))
 pathC3_Ground.segment(length =  pathC3_Ground.x  - 10 - C_x - 7*150  , direction = '-x' , **ld_LNARFP)
 pathC3_Ground.arc(radius = 10 , initial_angle = a2r(-90) , final_angle = a2r(-180) , tolerance = 0.0001 , **ld_LNARFP)
+pathC3_Ground.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC3_Ground)
 
 
@@ -378,6 +386,7 @@ pathC3_B_Lowwer_mid = sbendPath(pathC3_B_Lowwer_mid , L = 500, H = C_y - pathC3_
 pathC3_B_Lowwer_mid.mirror((pathC3_B_Lowwer.x,pathC3_B_Lowwer.y+5),(pathC3_B_Lowwer.x,pathC3_B_Lowwer.y-5))
 pathC3_B_Lowwer_mid.segment(length = pathC3_B_Lowwer_mid.x -C_x - 6*150 - 20 , direction = '-x' , **ld_LNARFP)
 pathC3_B_Lowwer_mid.arc(radius = 20 , initial_angle = a2r(-90) , final_angle = a2r(-180) , tolerance = 0.0001 , **ld_LNARFP)
+pathC3_B_Lowwer_mid.segment(length= 30 , direction="+y" , final_width=110 ,**ld_LNARFP)
 cell.add(pathC3_B_Lowwer)
 cell.add(pathC3_B_Lowwer_mid)
 
