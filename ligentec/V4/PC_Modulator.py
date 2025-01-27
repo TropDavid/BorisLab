@@ -161,6 +161,9 @@ def ViaAndPad(x = 0, y = 0,S = -1):
     for i in range(7):
         for j in range(7):
             cell.add(gdspy.Rectangle((x + (4 + (side+dis)*j)*k,y +( 4 + (side+dis)*i)*k), (x + (4 + (side+dis)*j + side)*k  , y + (4 + (side+dis)*i+ side)*k),**ld_Via))
+            
+            
+            
 def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     cell.add(gdspy.CellReference(MMI_1X2, (x,y)))
 
@@ -201,8 +204,8 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
     pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
     
-    pathTop.segment(length = L + 400, direction = "+x" , **ld_X1)
-    pathBottom.segment(length = L + 400 , direction = "+x" , **ld_X1)
+    pathTop.segment(length = L + 400 + 110, direction = "+x" , **ld_X1)
+    pathBottom.segment(length = L + 400+110 , direction = "+x" , **ld_X1)
     ########################################################################################Heaters#########################################################################
     pathHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
     pathHTop.turn(radius = radius_bend , angle = 'l' ,**ld_P1P)

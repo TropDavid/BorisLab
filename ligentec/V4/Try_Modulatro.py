@@ -192,6 +192,9 @@ pathBottom.segment(length = 270 , direction = "+x" , **ld_X1)
 pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
 pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)
 
+pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
+
 ########################################################################################Heaters#########################################################################
 pathHTop = gdspy.Path(width = 2 , initial_point=(pathTop.x,pathTop.y))
 pathHTop.turn(radius = radius_bend , angle = 'l' ,**ld_P1P)
