@@ -27,7 +27,7 @@ ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
 lib = gdspy.GdsLibrary()
 cell =lib.new_cell('Modulator_BIU')
 
-lib.read_gds("cells.GDS")
+lib.read_gds('cells.GDS')
 
 # the notation is from left to right and the (0,0) is at the (left, middle) of the BB (So 5 overlap in required) , length of 400
 Taper_end=lib.cells['ligentecInvertedTaper_w1.0BB'] 
@@ -85,7 +85,7 @@ def ViaAndPad(x = 0, y = 0,S = -1):
     x = x - k*(4 + 7*side +6*dis)/2
     cell.add(gdspy.Rectangle((x,y), (x +( 8 + 7*side +6*dis)*k , y + ( 8 + 7*side +6*dis)*k),**ld_P1P))
     cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (8 + 7*side +6*dis + 2)*k , y + (20 + 7*side +6*dis + 30)*k ),**ld_P1R))
-    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (8 + 7*side +6*dis + 1)*k , y  +( 20 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
+    cell.add(gdspy.Rectangle((x - 1*k + 3*k ,y  +( 4 + 7*side +6*dis + 21)*k + 3*k), (x - 3*k + (8 + 7*side +6*dis + 1)*k , y  +( 20 + 7*side +6*dis + 29)*k  - 3*k),**ld_P1Pad))
     
     for i in range(7):
         for j in range(7):
@@ -186,8 +186,8 @@ cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,path1.y)))
 pathTop.x = pathTop.x + 10752 - Overlap_Length *2
 pathBottom.x = pathBottom.x + 10752 - Overlap_Length *2
 
-pathTop.segment(length = 270+50 , direction = "+x" , **ld_X1)
-pathBottom.segment(length = 270+50 , direction = "+x" , **ld_X1)
+pathTop.segment(length = 270 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = 270 , direction = "+x" , **ld_X1)
 
 pathTop = sbendPathMBetter(pathTop , L = 200 , H = 19 - 12.27)
 pathBottom = sbendPath(pathBottom , L = 200 , H = 19 - 12.27)

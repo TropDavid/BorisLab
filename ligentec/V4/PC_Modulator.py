@@ -156,7 +156,7 @@ def ViaAndPad(x = 0, y = 0,S = -1):
     x = x - k*(4 + 7*side +6*dis)/2
     cell.add(gdspy.Rectangle((x,y), (x +( 8 + 7*side +6*dis)*k , y + ( 8 + 7*side +6*dis)*k),**ld_P1P))
     cell.add(gdspy.Rectangle((x - 2*k,y - 2*k), (x + (8 + 7*side +6*dis + 2)*k , y + (20 + 7*side +6*dis + 30)*k ),**ld_P1R))
-    cell.add(gdspy.Rectangle((x - 1*k ,y  +( 4 + 7*side +6*dis + 21)*k), (x + (8 + 7*side +6*dis + 1)*k , y  +( 20 + 7*side +6*dis + 29)*k ),**ld_P1Pad))
+    cell.add(gdspy.Rectangle((x - 1*k + 3*k ,y  +( 4 + 7*side +6*dis + 21)*k + 3*k), (x - 3*k + (8 + 7*side +6*dis + 1)*k , y  +( 20 + 7*side +6*dis + 29)*k  - 3*k),**ld_P1Pad))
     
     for i in range(7):
         for j in range(7):
