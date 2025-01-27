@@ -1,0 +1,39 @@
+DSC_Report of Layout MASK_BIU01_fix.gds
+DSC call from the Call-button/Layout window
+
+DSC Rule_01 - PASSED (TopCell Name Check)
+
+DSC Rule_02 - PASSED (Database Unit Check)
+
+DSC Rule_03 - PASSED (Origin Location Check)
+
+DSC Rule_04(1) - FAILED (PDK Layer Compatibility Check)
+---> PDK Layer Check (1) finished! Layers ["70/2", "301/2", "331/0", "330/0", "301/0", "330/2"] are found! These layers do not exist in our library.
+Please remove the layers prior to submission.
+
+DSC Rule_04(2) - PASSED (CHS-CSL Layer Check)
+
+DSC Rule_05- START (BBR Check)
+If there wrongly instantiated BlackBoxes at hierarchy level n, the name of its relative top-cell (n+1) and the coordinates of the respective BlackBox inside its relative top-cell (n+1), can be found below:
+
+Total BlackBox count is summarized below:
+{}
+
+DSC Rule_05(1) - PASSED (BBR Check(1))
+
+DSC Rule_05(2) - FAILED (BBR Check(2))
+---> BBR Check (2) finished! Layer 15/2  is remaining, indicating that BBs have not been correctly implemented.
+Please refer to the Design Check instruction document.
+Please contact LIGENTEC-Sales if further support is needed. 
+
+DSC Rule_06 - FAILED (Cell Size Check - MPW Standard)
+The noted deviations are the following:
+- CHS width, change by: -5330.0 μm
+- CHS height, change by: -20.0 μm
+- CSL width, change by:-5290.0 μm
+- CSL height, change by:20.0 μm
+
+DSC Rule_07- START (Degenerate Boundary Check)
+The coordinates of the concerning shapes/boxes/polygons can be found below:
+
+DSC Rule_07 - PASSED (Degenerate Boundary Check)
