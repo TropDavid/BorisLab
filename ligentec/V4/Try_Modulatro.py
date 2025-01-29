@@ -203,9 +203,11 @@ pathHTop.turn(radius = radius_bend , angle = 'l' , **ld_P1P)
 pathBackHTop = gdspy.Path(width = 5 , initial_point=(pathTop.x,pathTop.y))
 pathBackHTop.segment(length = 40 , direction= "-x" , **ld_P1P)
 pathBackHTop.arc(radius = 40 , initial_angle=a2r(-90) , final_angle=a2r(-180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+pathBackHTop.segment(length = 5 , direction = "+y" , **ld_P1P)
 
 pathFrontHTop = gdspy.Path(width = 5 , initial_point=(pathHTop.x,pathHTop.y))
 pathFrontHTop.arc(radius = 40 , initial_angle=a2r(-90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+pathFrontHTop.segment(length = 5 , direction = "+y" , **ld_P1P)
 
 pathHBottom = gdspy.Path(width =5 ,initial_point= (pathBottom.x,pathBottom.y))
 # pathHBottom.turn(radius = radius_bend , angle = 'r' , **ld_P1P)
@@ -217,9 +219,11 @@ pathHBottom.segment(length = pathHTop.x-pathHBottom.x , direction = "+x" , **ld_
 
 pathBackHBottom = gdspy.Path(width = 5 , initial_point=(pathBottom.x,pathBottom.y))
 pathBackHBottom.arc(radius = 30 , initial_angle=a2r(90) , final_angle=a2r(180) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+pathBackHBottom.segment(length = 5 , direction = "-y" , **ld_P1P)
 
 pathFrontkHBottom = gdspy.Path(width = 5 , initial_point=(pathHBottom.x,pathHBottom.y))
 pathFrontkHBottom.arc(radius = 30 , initial_angle=a2r(90) , final_angle=a2r(0) , tolerance = 0.005 , final_width = 10 , **ld_P1P)
+pathFrontkHBottom.segment(length = 5 , direction = "-y" , **ld_P1P)
 
 ViaAndPad(pathBackHTop.x,pathBackHTop.y,-1)
 ViaAndPad(pathFrontHTop.x,pathFrontHTop.y,-1)
