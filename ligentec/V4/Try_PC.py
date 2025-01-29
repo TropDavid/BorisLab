@@ -260,8 +260,8 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathBottom.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 , direction = "+x" , **ld_X1)
-cell.add(gdspy.CellReference(Taper_end, (pathBottom.x,pathBottom.y)))
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 5 , direction = "+x" , **ld_X1)
+cell.add(gdspy.CellReference(Taper_end, (pathBottom.x - 5 ,pathBottom.y)))
 
 cell.add(path1)
 cell.add(pathTop)
