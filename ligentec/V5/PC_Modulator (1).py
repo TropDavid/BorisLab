@@ -27,7 +27,7 @@ ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
 lib = gdspy.GdsLibrary()
 cell =lib.new_cell('PC_Controller')
 
-lib.read_gds("cells.GDS")
+lib.read_gds("cellsFIX.GDS")
 
 # the notation is from left to right and the (0,0) is at the (left, middle) of the BB (So 5 overlap in required) , length of 400
 Taper_end=lib.cells['ligentecInvertedTaper_w1.0BB'] 
@@ -272,7 +272,7 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
 
 
 cell.add(gdspy.CellReference(Taper_end, (400,27.3) , rotation = 180))
-path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - Overlap_Length ,27.3))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length,27.3))
 path1.segment(length = 50 , direction = "+x" , **ld_X1)
 
 ###########################################PBS###################################################################
@@ -311,8 +311,8 @@ pathBottom.segment(length = 10 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathTop.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + Overlap_Length , direction = "+x" , **ld_X1)
-cell.add(gdspy.CellReference(Taper_end, (pathBottom.x - Overlap_Length ,pathBottom.y)))
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 2*Overlap_Length , direction = "+x" , **ld_X1)
+cell.add(gdspy.CellReference(Taper_end, (pathBottom.x  ,pathBottom.y)))
 
 cell.add(path1)
 cell.add(pathTop)

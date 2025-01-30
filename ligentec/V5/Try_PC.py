@@ -16,7 +16,7 @@ ld_LNARFPAD = {"layer": 331 , "datatype": 0} # Opening to the Electrode
 lib = gdspy.GdsLibrary()
 cell =lib.new_cell('TOP')
 
-lib.read_gds('cells.GDS')
+lib.read_gds('cellsFIX.GDS')
 
 # the notation is from left to right and the (0,0) is at the (left, middle) of the BB (So 5 overlap in required) , length of 400
 Taper_end=lib.cells['ligentecInvertedTaper_w1.0BB'] 
@@ -135,7 +135,7 @@ def a2r(ang):  # angle to radian
 
 
 cell.add(gdspy.CellReference(Taper_end, (400,27.3) , rotation = 180))
-path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - Overlap_Length ,27.3))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length  ,27.3))
 path1.segment(length = 50 , direction = "+x" , **ld_X1)
 
 ###########################################PBS###################################################################
@@ -260,8 +260,8 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathBottom.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 5 , direction = "+x" , **ld_X1)
-cell.add(gdspy.CellReference(Taper_end, (pathBottom.x - 5 ,pathBottom.y)))
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 10 , direction = "+x" , **ld_X1)
+cell.add(gdspy.CellReference(Taper_end, (pathBottom.x  ,pathBottom.y)))
 
 cell.add(path1)
 cell.add(pathTop)
