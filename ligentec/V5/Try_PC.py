@@ -222,8 +222,8 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 ####################################################################MMI2###############################################
 cell.add(gdspy.CellReference(MMI2X2,((pathBottom.x,pathBottom.y))))
 
-pathTop.x = pathTop.x + MMI_Length - 10
-pathBottom.x = pathBottom.x + MMI_Length - 10
+pathTop.x = pathTop.x + MMI_Length - 5
+pathBottom.x = pathBottom.x + MMI_Length - 5
 
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
