@@ -148,8 +148,8 @@ def a2r(ang):  # angle to radian
     return np.pi/180*ang
 
 
-cell.add(gdspy.CellReference(Taper_end, (400,0) , rotation = 180))
-path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length  ,0))
+cell.add(gdspy.CellReference(Taper_end, (395,0) , rotation = 180))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - 5  ,0))
 path1.segment(length = 1000 , direction = "+x" , **ld_X1)
 
 cell.add(gdspy.CellReference(MMI_1X2, (path1.x,path1.y)))

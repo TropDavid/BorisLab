@@ -190,13 +190,13 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     cell.add(gdspy.CellReference(padL, (Left_Electrode_x - Overlap_Length*4 - 350 , y+120)))
     cell.add(gdspy.CellReference(padR, (Right_Electrode_x + Overlap_Length*4 + B*300+20 ,y+120)))
 
-    cell.add(gdspy.CellReference(GSGM, (pathTop.x-Overlap_Length ,y)))
+    cell.add(gdspy.CellReference(GSGM, (pathTop.x ,y)))
     
     FlexPath1 = gdspy.FlexPath(points = [(Right_Electrode_x  - 2*Overlap_Length ,S_y),(Right_Electrode_x + Overlap_Length*4 + B*300 , S_y)], width = [50, 30 , 50] , offset = 48 , **ld_LNARFP)
     cell.add([FlexPath1])
     
-    pathTop.x = pathTop.x + 10752 - Overlap_Length 
-    pathBottom.x = pathBottom.x + 10752 - Overlap_Length 
+    pathTop.x = pathTop.x + 10752 -10
+    pathBottom.x = pathBottom.x + 10752 -10 
 
     pathTop.segment(length = 100 , direction = "+x" , **ld_X1)
     pathBottom.segment(length = 100 , direction = "+x" , **ld_X1)
@@ -271,8 +271,8 @@ def Mod (x = 0 , y = 0 , L = 0 ,B = 0):
     return[pathBottom.x + MMI_Length - 10]
 
 
-cell.add(gdspy.CellReference(Taper_end, (400,27.3) , rotation = 180))
-path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length,27.3))
+cell.add(gdspy.CellReference(Taper_end, (395,27.3) , rotation = 180))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - 5 ,27.3))
 path1.segment(length = 50 , direction = "+x" , **ld_X1)
 
 ###########################################PBS###################################################################
@@ -311,7 +311,7 @@ pathBottom.segment(length = 10 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathTop.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 2*Overlap_Length , direction = "+x" , **ld_X1)
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 1*Overlap_Length , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(Taper_end, (pathBottom.x  ,pathBottom.y)))
 
 cell.add(path1)

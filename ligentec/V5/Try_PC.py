@@ -134,8 +134,8 @@ def a2r(ang):  # angle to radian
     return np.pi/180*ang
 
 
-cell.add(gdspy.CellReference(Taper_end, (400,27.3) , rotation = 180))
-path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length  ,27.3))
+cell.add(gdspy.CellReference(Taper_end, (395,27.3) , rotation = 180))
+path1 = gdspy.Path(width = WG_Width , initial_point = (Taper_Length - 5  ,27.3))
 path1.segment(length = 50 , direction = "+x" , **ld_X1)
 
 ###########################################PBS###################################################################
@@ -179,8 +179,8 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 ################################################################MMI1##################################################
 cell.add(gdspy.CellReference(MMI2X2,((pathBottom.x,pathBottom.y))))
 
-pathTop.x = pathTop.x + MMI_Length - 10
-pathBottom.x = pathBottom.x + MMI_Length - 10
+pathTop.x = pathTop.x + MMI_Length - 5
+pathBottom.x = pathBottom.x + MMI_Length - 5
 
 pathTop.segment(length = 50 , direction = "+x" , **ld_X1)
 pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
@@ -260,7 +260,7 @@ pathBottom.segment(length = 50 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(PBS, (pathBottom.x + PBS_Length - Overlap_Length*2 ,pathBottom.y),rotation = 180 ))
 
 pathBottom.x = pathBottom.x + PBS_Length - 10
-pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 10 , direction = "+x" , **ld_X1)
+pathBottom.segment(length = Cell_Length - pathBottom.x - 400 + 5 , direction = "+x" , **ld_X1)
 cell.add(gdspy.CellReference(Taper_end, (pathBottom.x  ,pathBottom.y)))
 
 cell.add(path1)
