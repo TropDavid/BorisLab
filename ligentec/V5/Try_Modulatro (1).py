@@ -253,7 +253,7 @@ cell.add(gdspy.CellReference(MMI_1X2, (pathTop.x + 220  - 10 ,path1.y) , rotatio
 
 path1.x = pathTop.x + MMI_Length  - 2* Overlap_Length
 
-path1.segment(length = Cell_Length - path1.x - 390 , direction = "+x" , **ld_X1)
+path1.segment(length = Cell_Length - path1.x - 390 -Overlap_Length, direction = "+x" , **ld_X1)
 
 cell.add(gdspy.CellReference(Taper_end, (path1.x  ,path1.y)))
 
