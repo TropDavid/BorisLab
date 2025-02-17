@@ -7,7 +7,7 @@ import pya
 layout = pya.Layout()
 layout.dbu = 0.001
 TOP = layout.create_cell("TOP")
-gdsFiles=["Chip.gds","PC_Modulator_GSGGSG02.gds","Modulator.gds","Try_PC.gds"]
+gdsFiles=["Chip.gds","PC_Modulator_GSGGSG.gds","Modulator.gds","Try_PC.gds"]
 pos=[(0,0),(0,280000),(0,830000),(0,1300000)]
 ind=0
 for gdsF in gdsFiles:
