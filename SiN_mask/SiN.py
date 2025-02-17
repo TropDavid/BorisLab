@@ -72,7 +72,7 @@ def GC_WG_Ring_GC(Radius = 100,Gap = 0.6 ,R0 = 25,period = 1.001 ,period_r = 0 ,
     cell.add(path)
     cell.add(pathRing)
 
-def WG_Whole_chip(C_length = 6000, Radius = 100 , Gap = 0.6 , x = 0,y = 0 , wg_width = 1.2 ,Number = 5 , TurnAt = 2000 , Rings = 0):
+def WG_Whole_chip(C_length = 6000, Radius = 100 , Gap = 0.6 , x = 0,y = 0 , wg_width = 1.2 ,Number = 3 , TurnAt = 2000 , Rings = 0):
     text = gdspy.Text("W = "+str(wg_width),20,(x + 500 ,y + 30) , **ld_WG)
     cell.add(text)
     text = gdspy.Text("W = "+str(wg_width),20,(x + C_length - 100 ,y+2*Radius + 30) , **ld_WG)
@@ -126,10 +126,10 @@ def GC_Ushape(R0 = 25,period = 1.05 ,period_r = 0 ,ff0 = 0.52 ,ff_r = 0 ,gc_numb
     
 wg_width = 1.2
 
-period = [1.1,1.15,1.2]
+period = [1.15,1.2]
 FF = [0.55,0.6,0.65]
 Angle = 25
-Gap = [0.6,0.64,0.68,0.72,0.76]
+Gap = [0.55,0.6,0.65,0.76]
 # diss_in_y_bet_angle = 50
 diss_in_x_bet_FF = 60 + 300
 diss_in_x_bet_Period = (60+300)*len(FF)
