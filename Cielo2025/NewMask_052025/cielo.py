@@ -1,5 +1,6 @@
 import numpy as np
 import gdspy
+import uuid
 
 
 from matplotlib.font_manager import FontProperties
@@ -9,6 +10,9 @@ from matplotlib.textpath import TextPath
 ld_LN = {"layer": 32, "datatype": 0}
 ld_Metal = {"layer": 29, "datatype": 0}
 ld_SU8 = {"layer": 50, "datatype": 0}
+ld_METAL2 = {"layer": 29, "datatype": 0}
+ld_NWG = {"layer": 32, "datatype": 0}
+ld_Silox = {"layer": 50, "datatype": 0}
 
 ## Global variables
 cell_width=2100
@@ -40,7 +44,27 @@ ELOPLogo = lib.cells['ELOP']
 BIULogo = lib.cells['BIU']
 
 
+## create arrow
+arrow_cell =lib.new_cell('ARROW')
 
+def Arrow(cell,x=0,y=0):
+    arrow_diss_down = 100
+    arrow_mid_height = 355
+    arrow_diss_sides = 50
+    arrow_top_height = 250
+    diss_arrow_from_wg = 200
+    
+    #create the arrow sign
+    points = [( x - diss_arrow_from_wg , y + 500 ),(x - diss_arrow_from_wg - arrow_diss_down , y + 500)
+              ,(x - diss_arrow_from_wg - arrow_diss_down , y + 500 + arrow_mid_height)
+              ,(x - diss_arrow_from_wg - arrow_diss_down - arrow_diss_sides , y + 500 + arrow_mid_height)
+              ,( x - diss_arrow_from_wg - arrow_diss_down/2 , y + 500 + arrow_mid_height + arrow_top_height)
+              ,(x - diss_arrow_from_wg + arrow_diss_sides , y + 500 + arrow_mid_height)
+              ,(x - diss_arrow_from_wg , y + 500 + arrow_mid_height)]
+    arrowM = gdspy.Polygon(points,**ld_Metal)
+    cell.add(arrowM)
+    
+Arrow(arrow_cell,0,0)
 
 
 def render_text(text, size=None, position=(0, 0), font_prop=None, tolerance=0.1):
@@ -137,80 +161,71 @@ def Create_wafer_map():
         dicing_cell.add(gdspy.CellReference(dice_mark_cell,  (cells[n,0]+  cell_width - (dicing_line_width/2+30),
             cells[n,1]+ cell_height_true -(dicing_line_width/2+30)), rotation =180))
 
-        x,y=cells[n,0]+dicing_line_width/2+300,cells[n,1]+dicing_line_width/2+1500
+        x,y=cells[n,0]+dicing_line_width/2+200-40,cells[n,1]+dicing_line_width/2+1500
         arc = gdspy.Round((x,y),radius=150,inner_radius=150-7,number_of_points =100,**ld_LN)
         arc1 = gdspy.Round((x,y),radius=150,inner_radius=150-7,number_of_points =100,**ld_Metal)
+        arc2 = gdspy.Round((x,y+cell_height_true-4500),radius=150,inner_radius=150-7,number_of_points =100,**ld_Metal)
+
         # # text = gdspy.Text(str(n),150, (x-100,y-100), **ld_Metal)
         # text1 = gdspy.Text(str(n),150, (x-100,y-100), **ld_LN)
-        text = gdspy.PolygonSet(render_text(str(n).zfill(2),size=200,position=(x-100-27,y-100+30) , font_prop=fp),**ld_Metal )
-        text1 = gdspy.PolygonSet(render_text(str(n).zfill(2),size=200,position=(x-100-27,y-100+30) , font_prop=fp),**ld_LN )
+        text = gdspy.PolygonSet(render_text(str(n+1).zfill(2),size=200,position=(x-100-27,y-100+30) , font_prop=fp),**ld_Metal )
+        # text1 = gdspy.PolygonSet(render_text(str(n).zfill(2),size=200,position=(x-100-27,y-100+30) , font_prop=fp),**ld_LN )
+        text2 = gdspy.PolygonSet(render_text(str(n+1).zfill(2),size=200,position=(x-100-27,y-100+30+cell_height_true-4500) , font_prop=fp),**ld_Metal )
 
-        num_cell.add([arc,text,arc1,text1])
+        num_cell.add([arc,text,arc1,text2,arc2])
+        if n <20:
+            num_cell.add(gdspy.CellArray(arrow_cell,1,5,(0,4600),  (x+270,y-1500) ))
+        else:
+            num_cell.add(gdspy.CellArray(arrow_cell,1,4,(0,4600*2),  (x+270,y-1500) ))
 
-        
     # Logos
-        if (n+1) in[1,2,5,6,7,8,9,10,11,12,30,31,32,33,34,35]:
+        if (n+1) in[1,2,5,6,7,8,9,10,11,12]:
             dicing_cell.add(gdspy.CellReference(cieloLogo,  (cells[n,0]+400,
                 cells[n,1]+3000),magnification=4,rotation =90))
             dicing_cell.add(gdspy.CellReference(cieloLogo,  (cells[n,0]+400,
                 cells[n,1]+cell_height_true-1500),magnification=4,rotation =90))
 
-        if (n+1) in[3,4,21,22,23,24,25,26,27,28,29,36,37,38]:
+        if (n+1) in[3,4,21,22]:
             dicing_cell.add(gdspy.CellReference(ELOPLogo,  (cells[n,0]+400,
                 cells[n,1]+3000),magnification=4,rotation =90))
             dicing_cell.add(gdspy.CellReference(ELOPLogo,  (cells[n,0]+400,
                 cells[n,1]+cell_height_true-1500),magnification=4,rotation =90))
 
-        dicing_cell.add(gdspy.CellReference(BIULogo,  (cells[n,0]+550,
+        dicing_cell.add(gdspy.CellReference(BIULogo,  (cells[n,0]+500,
             cells[n,1]+3900),magnification=0.03,rotation =90))
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# global constants
 Width_WG = 5
-diss_to_metal = 4.75
-Metal_width = 15
+diss_bet_El = 17
+diss_to_metal = (diss_bet_El - Width_WG)/2
 
-gap = 700
 
-arrow_diss_down = 100
-arrow_mid_height = 355
-arrow_diss_sides = 100
-arrow_top_height = 150
-diss_arrow_from_wg = 200
-
-tri_width = 75
-tri_height = 160
-tri_diss_from_wg = 50
-
-sign_width = 20
-sign_height = 130
-sign_bottom = 130
-sign_diss_from_wg = 720
-
+length_WG = 20010
+Metal_width = 20
+Metal_length = 19000
 holes_width = 280
 holes_height = 1300
 diss_holes_wg = 51
+
 pads_w=280
 pads_l=1300
 
 
+gap = 700
 
-# S bend path
-def sbendPath(wgsbend,L=100,H=50,info = ld_LN):
+## create pad
+pad_cell =lib.new_cell('PAD')
+rec = gdspy.Rectangle((-holes_width/2 ,-holes_height/2)
+                        ,(holes_width/2,holes_height/2), **ld_SU8)
+rect = rec.fillet(50)
+pad_cell.add(rect)
+rect = gdspy.Rectangle((-holes_width/2-15 ,-holes_height/2-15), (holes_width/2+30,holes_height/2+15),**ld_Metal)
+pad_cell.add(rect)
+
+
+
+def sbendPath(wgsbend,L=100,H=50,info = ld_NWG):
 # the formula for cosine-shaped s-bend is: y(x) = H/2 * [1- cos(xpi/L)]
 # the formula for sine-shaped s-bend is: y(x) = xH/L - H/(2pi) * sin(x2*pi/L)
     def sbend(t):
@@ -228,7 +243,8 @@ def sbendPath(wgsbend,L=100,H=50,info = ld_LN):
     wgsbend.parametric(sbend ,dtsbend , number_of_evaluations=100,**info)  
     return wgsbend   
  
-def sbendPathM(wgsbend,L=100,H=50,info = ld_LN):
+
+def sbendPathM(wgsbend,L=100,H=50,info = ld_NWG):
 
     def sbend(t):
         x = H/2 * (np.cos(t*np.pi))
@@ -245,76 +261,365 @@ def sbendPathM(wgsbend,L=100,H=50,info = ld_LN):
     wgsbend.parametric(sbend ,dtsbend , number_of_evaluations=100,**info)  
     return wgsbend    
     
-# deg tor radian
+
 def a2r(ang):  # angle to radian
     return np.pi/180*ang
 
-# draw straigh waveguide with phase shifters
-def cielo_wg (cell,wg_length = 1580 , el_length = 426 , el_gap = 6 , el_width = 10498  , Width_WG = Width_WG , x = 0 , y = 0):
-    # draw wg
-    path1 = gdspy.Path(width=Width_WG ,initial_point=(x,y))    
-    path1.segment(wg_length,"+y" ,**ld_LN )
-    # draw electrodes
-    path2 = gdspy.Path(width=el_width ,initial_point=(x +  (el_gap+el_width)/2,y+(wg_length-el_length)/2))
-    path2.segment(el_length,"+y" ,**ld_Metal )
-    path3 = gdspy.Path(width=el_width ,initial_point=(x -  (el_gap+el_width)/2,y+(wg_length-el_length)/2))
-    path3.segment(el_length,"+y" ,**ld_Metal )
-    path2.fillet(el_width*0.25)
-    path3.fillet(el_width*0.25)   
+
+def Tri(cell,x = 0,y = 0):
     
-    # added triangles marks at begening and end
+    tri_width = 75
+    tri_height = 160
+    tri_diss_from_wg = 50
+    
     points = [(x - tri_diss_from_wg , y + 500),(x - tri_diss_from_wg , y + 500 + tri_height),(x - tri_diss_from_wg - tri_width , y + 500 + tri_height)]
-    tri = gdspy.Polygon(points , **ld_Metal)
+    tri = gdspy.Polygon(points , **ld_METAL2)
     cell.add(tri)
 
     points = [(x - tri_diss_from_wg , y + 500 +  tri_height),(x - tri_diss_from_wg , y + 500 + tri_height*2),(x - tri_diss_from_wg - tri_width , y + 500 + tri_height*2)]
-    tri = gdspy.Polygon(points , **ld_Metal)
+    tri = gdspy.Polygon(points , **ld_METAL2)
     cell.add(tri)
 
-    points = [(x- tri_diss_from_wg , y + 19000),(x  - tri_diss_from_wg , y + 19000 + tri_height),(x  - tri_diss_from_wg - tri_width , y + 19000 + tri_height)]
-    tri = gdspy.Polygon(points , **ld_Metal)
-    cell.add(tri)
-
-    points = [(x - tri_diss_from_wg , y + 19000 +  tri_height),(x  - tri_diss_from_wg , y + 19000 + tri_height*2),(x  - tri_diss_from_wg - tri_width , y + 19000 + tri_height*2)]
-    tri = gdspy.Polygon(points , **ld_Metal)
-    cell.add(tri)
-
-
- # draw 2 pads in SU8
-    if pads_w < el_width:
-        pads_xr,pads_yr=x +  (el_gap+el_width)/2 , y+(wg_length-pads_l)/2                                              
-        pads_xl,pads_yl=x -  (el_gap+el_width)/2 , y+(wg_length-pads_l)/2+pads_l*2
-    else:             # contact widths thinner that electrodes => draw metalic contacts                                     
-        pads_xr,pads_yr=x +  (el_gap+el_width+pads_w)/2 , y+(wg_length-pads_l)/2                                              
-        pads_xl,pads_yl=x -  (el_gap+el_width+pads_w)/2 , y+(wg_length-pads_l)/2+pads_l*2
-        path6 = gdspy.Path(width=pads_w-10 ,initial_point=(pads_xr,pads_yr+5))    
-        path6.segment(pads_l-10,"+y" ,**ld_Metal)
-        path7 = gdspy.Path(width=pads_w-10 ,initial_point=(pads_xl,pads_yl+5))    
-        path7.segment(pads_l-10,"+y" ,**ld_Metal )
-        path7.fillet(pads_w*0.25)
-        path6.fillet(pads_w*0.25)
-        cell.add([path6,path7])
-   
-    path4 = gdspy.Path(width=pads_w ,initial_point=(pads_xr,pads_yr))    
-    path4.segment(pads_l,"+y" ,**ld_SU8 )
-    path5 = gdspy.Path(width=pads_w ,initial_point=(pads_xl,pads_yl))    
-    path5.segment(pads_l,"+y" ,**ld_SU8 )
- 
-    path4.fillet(pads_w*0.25)
-    path5.fillet(pads_w*0.25)
     
-    cell.add([path1,path2,path3,path4,path5])
-    y+=1000
-    #create the arrow sign
-    points = [( x - diss_arrow_from_wg , y + 500 ),(x - diss_arrow_from_wg - arrow_diss_down , y + 500)
-              ,(x - diss_arrow_from_wg - arrow_diss_down , y + 500 + arrow_mid_height)
-              ,(x - diss_arrow_from_wg - arrow_diss_down - arrow_diss_sides , y + 500 + arrow_mid_height)
-              ,( x - diss_arrow_from_wg - arrow_diss_down/2 , y + 500 + arrow_mid_height + arrow_top_height)
-              ,(x - diss_arrow_from_wg + arrow_diss_sides , y + 500 + arrow_mid_height)
-              ,(x - diss_arrow_from_wg , y + 500 + arrow_mid_height)]
-    arrow = gdspy.Polygon(points,**ld_LN)
-    arrowM = gdspy.Polygon(points,**ld_Metal)
-    cell.add(arrow)
-    cell.add(arrowM)
+def PadLeft(cell,x,y):
+    rec = gdspy.Rectangle((x - diss_holes_wg - Width_WG/2 - diss_to_metal , y + 1000 - holes_height /2)
+                          ,(x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal , y + 1000 + holes_height /2), **ld_SU8)
+    rect = rec.fillet(50)
+    cell.add(rect)
+    
+    # rec = gdspy.Rectangle((x - diss_holes_wg - Width_WG/2 - diss_to_metal + 15 , y + 1000 - holes_height /2 - 15)
+    #                       ,(x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal  - 15, y + 1000 + holes_height /2 + 15 ), **ld_Metal)
+    # rect = rec.fillet(50)
+    
+    rect = gdspy.Rectangle((x - Width_WG/2 - diss_to_metal , y + 1000 - holes_height/2 - 15), (x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal  - 15 , y + 1000 + holes_height/2 + 15),**ld_Metal)
+    cell.add(rect)
 
+def PadRight(cell,x,y):
+    # rec = gdspy.Rectangle((x + Width_WG/2 + diss_to_metal + diss_holes_wg ,y + 1000 - holes_height /2 +15)
+    #                       ,(x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , y + 1000 + holes_height /2 - 15), **ld_SU8)
+    # rect = rec.fillet(50)
+    # cell.add(rect)
+    
+    rec = gdspy.Rectangle((x + Width_WG/2 + diss_to_metal + diss_holes_wg - 15 , y + 1000 - holes_height /2)
+                          ,(x + Width_WG/2 + diss_to_metal + diss_holes_wg + holes_width , y + 1000 + holes_height /2), **ld_SU8)
+    rect = rec.fillet(50)
+    cell.add(rect)
+    
+    rect = gdspy.Rectangle((x + Width_WG/2 + diss_to_metal , y + 1000 - holes_height/2 - 15), (x + diss_holes_wg + holes_width + Width_WG/2 + diss_to_metal  + 15 , y + 1000 + holes_height/2 + 15),**ld_Metal)
+    cell.add(rect)
+
+
+def Straigh (cell,Width_WG = Width_WG,x = 0,y = 0,length_WG = length_WG , el_gap = 2,
+             el_width=10 , El_length = Metal_length,y_pads_shift=0
+             ):
+    diss_to_metal = (el_gap - Width_WG)/2
+
+    Tri(cell,x,y)
+    # Tri(x,y + length_WG - 1000)
+    
+    #the start of the WG
+    path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
+    path1.segment(length = length_WG , direction ="+y" , **ld_NWG)
+    
+    Tri(cell,path1.x,path1.y - 1500)
+    el_width=el_width+el_gap/2
+    mid = gdspy.offset(path1 , diss_to_metal , join_first = True ,**ld_Silox)
+    rect = gdspy.Rectangle((x - el_width , y + 500), (x + el_width , y + 500 + El_length), **ld_METAL2)
+    stam = gdspy.boolean(rect,mid,"not",**ld_METAL2)
+    
+    # PadLeft(cell,path1.x, path1.y/2+y_pads_shift)
+    # PadRight(cell,path1.x, path1.y/2+y_pads_shift)
+    cell.add(gdspy.CellReference(pad_cell,(path1.x-holes_width/2-el_gap/2-30
+                                           , path1.y/2+y_pads_shift)))
+
+    cell.add(gdspy.CellReference(pad_cell,(path1.x+holes_width/2+el_gap/2+30
+                                           , path1.y/2+y_pads_shift),rotation=180))
+    text = gdspy.PolygonSet(render_text('wg='+str(Width_WG)+'\u03bcm, el_gap'+ str(el_gap)+'\u03bcm' ,size=100,position=(0,0) , font_prop=fp),**ld_Metal )
+    txt_cell =lib.new_cell(str(uuid.uuid1()))
+    txt_cell.add(text)
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60,y+800),rotation=90))
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60,y-1900+length_WG),rotation=90))
+
+    cell.add(path1)
+    cell.add(stam)
+
+
+def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 20010 - 700 - 4500  , S_length = 4500 , S_height = 210 
+                 , S_heigth_top = 190 , Width_WG = Width_WG , x = 0 , y = 0 ,y_to_pads=8500, el_width = Metal_width , el_gap=17 , El_length = 14410,M=1,left_right=0):
+    
+    diss_to_metal = (el_gap - Width_WG)/2
+
+    Tri(cell,x,y)
+    
+    #the start of the WG
+    path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
+    path1.segment(length = B_length , direction ="+y" , **ld_LN)
+    path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)
+    
+    
+    
+    x = path1.x
+    y = path1.y
+    
+    # creating the half circle in the Branch of Y-splitter
+    rect = gdspy.Rectangle((x + Brad/2 + Width_WG/2, y), (x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_LN)
+    circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_LN ,tolerance = 0.00001 , number_of_points = 199)
+    stam = gdspy.boolean(rect,circle,"not",**ld_LN)
+    cell.add(stam)
+    
+  
+    #creating the right arm 
+    path2 = gdspy.Path(width = Width_WG ,initial_point = (path1.x + Brad/2,path1.y + 0.5 ))
+    path2 = sbendPath(wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_LN)
+    y_o = path2.y
+    
+    x2 = path2.x
+    
+    path2.segment(length = A_length , direction ="+y" , **ld_LN)
+    
+    
+    if(M==1):
+     
+        #pad to the right of the right arm
+        if (left_right!=1):
+            PadRight(cell, x = path2.x, y = path2.y - y_to_pads)    
+        PadLeft(cell,path2.x,path2.y - y_to_pads)
+    
+    
+    #creating the left arm
+    path3 = gdspy.Path(width = Width_WG ,initial_point = ( path1.x - Brad/2 , path1.y + 0.5 ))
+    path3.x = path3.x - S_height/2
+    path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_LN)
+   
+    x3 = path3.x
+    path3.segment(length = A_length , direction ="+y" , **ld_LN)
+    if(M==1):
+        #creating the middle line to connect both ground
+        rec = gdspy.Rectangle((x2 - Width_WG/2 - diss_to_metal - 15 , path2.y + 1000 - y_to_pads - holes_height/2 - 50) 
+                              ,(x3 + Width_WG/2 + diss_to_metal + 15 , path2.y + 1000 - y_to_pads + holes_height/2 + 50)
+                              , **ld_Metal)
+        cell.add(rec)
+        if (left_right!=2):
+            PadLeft(cell, x = path3.x, y = path3.y - y_to_pads)
+     
+   
+                  
+    if(M ==1):
+        #creating the contact
+        mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 600 , y_o), (x + 600 , y_o + El_length), **ld_Metal)
+        stam = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        
+        mid = gdspy.offset([path3,path2] , diss_to_metal + el_width  , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 600 , y_o ), (x + 600 , y_o+El_length ), **ld_Metal)
+        stam2 = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        
+        stam = gdspy.boolean(stam,stam2,"not",**ld_Metal)
+    
+    ##### create the common electrode 
+    # r
+    if (left_right!=1):
+        rec = gdspy.Rectangle((x3-el_gap/2 , path2.y + 1000 - y_to_pads - holes_height/2 - 50) 
+                              ,(x3-(-el_gap/2+194) , path2.y + 1000 - y_to_pads + holes_height/2 + 50)
+                              , **ld_Metal)  
+        cell.add(rec)
+        rec = gdspy.Rectangle((x3-el_gap/2-15 , path2.y + 1000 - y_to_pads - holes_height/2 - 50+15) 
+                              ,(x3-(-el_gap/2+194-15) , path2.y + 1000 - y_to_pads + holes_height/2 + 50-15)
+                              , **ld_SU8)  
+        rect = rec.fillet(50)
+
+        cell.add(rect)
+  
+   
+    # sign at the top
+    Tri(cell,path3.x,path3.y - 1500)
+    
+    Tri(cell,path2.x,path2.y - 1500)
+
+    
+    
+    
+    if (M == 1):
+        cell.add([path1,path2,path3,stam])
+    else:
+        cell.add([path1,path2,path3])
+    ## add TEXT
+    text = gdspy.PolygonSet(render_text('wg='+str(Width_WG)+'\u03bcm, el_gap'+ str(el_gap)+'\u03bcm' ,size=100,position=(0,0) , font_prop=fp),**ld_Metal )
+    txt_cell =lib.new_cell(str(uuid.uuid1()))
+    txt_cell.add(text)
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60,y+200),rotation=90))
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60-230,y+A_length+1200),rotation=90)) 
+
+
+    return([path2.x , path2.y , path3.x , path3.y])
+
+def MZ (cell,B_length = 100 , Brad_length = 400 , Brad = 6 , A_length = 20005 - 5002.5  , S_length = 4502.5 , S_height = 210  
+                 , S_heigth_top = 190 ,Width_WG = Width_WG , x = 0 , y = 0 , el_width = Metal_width , el_gap=17 , El_length = 14000,left_right=0):
+
+    diss_to_metal = (el_gap - Width_WG)/2
+
+    Tri(cell,x,y)
+    # Tri(cell,x,y+length_WG - 1500)
+    
+    #the start of the WG
+    path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
+    path1.segment(length = B_length , direction ="+y" , **ld_LN)
+    path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)
+    
+    y_o =y-800
+    x = path1.x
+    y = path1.y
+    
+    # creating the half circle in the Branch of Y-splitter
+    rect = gdspy.Rectangle((x + Brad/2 + Width_WG/2, y), (x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_LN)
+    circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_LN ,tolerance = 0.00001 , number_of_points = 199)
+    stam = gdspy.boolean(rect,circle,"not",**ld_LN)
+    cell.add(stam)
+    
+    
+    #creating the right arm 
+    path2 = gdspy.Path(width = Width_WG ,initial_point = (path1.x + Brad/2,path1.y + 0.5 ))
+    path2 = sbendPath(wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_LN)
+    path2.segment(length = A_length , direction ="+y" , **ld_LN)
+    
+
+    #creating the left arm
+    path3 = gdspy.Path(width = Width_WG ,initial_point = ( path1.x - Brad/2 , path1.y + 0.5 ))
+    path3.x = path3.x - S_height/2
+    path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_LN)
+   
+    x3 = path3.x
+    path3.segment(length = A_length , direction ="+y" , **ld_LN)
+    
+    
+    cell.add([path1,path2,path3,stam])
+    
+    #making turn Y splitter to complete the MZ
+    path1m = gdspy.copy(path1).mirror(p1 = (path2.x,path2.y),p2 = (path3.x ,path2.y))
+    path2m = gdspy.copy(path2).mirror(p1 = (path2.x - 5,path2.y),p2 = (path2.x+5 ,path2.y))
+    path3m = gdspy.copy(path3).mirror(p1 = (path3.x - 5,path3.y),p2 = (path3.x + 5 ,path3.y))
+    stam1 = gdspy.copy(stam).mirror(p1 = (path2.x,path2.y),p2 = (path3.x ,path2.y))
+    
+    
+    if (left_right!=5):
+        #creating the contact
+        mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
+        mid2 = gdspy.offset([path3m,path2m] , diss_to_metal  , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 600 , y_o + B_length+Brad_length+S_length), (x + 600 , y_o + B_length+Brad_length+S_length + El_length*2), **ld_Metal)
+        stam = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        stam = gdspy.boolean(stam,mid2,"not",**ld_Metal)
+        
+        
+        mid = gdspy.offset([path3,path2] , diss_to_metal + el_width  , join_first = True ,**ld_SU8)
+        mid2 = gdspy.offset([path3m,path2m] , diss_to_metal + el_width  , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 600 , y_o + B_length+Brad_length+S_length), (x + 600 , y_o + B_length+Brad_length+S_length + El_length*2), **ld_Metal)
+        stam2 = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        stam2 = gdspy.boolean(stam2,mid2,"not",**ld_Metal)
+        
+        if (El_length==7500):
+            temp_y_shift=-6000
+        else:
+            temp_y_shift=-0
+
+        stam = gdspy.boolean(stam,stam2,"not",**ld_Metal)
+        if (left_right!=1):
+            PadRight(cell, x = path2.x, y = path2.y+temp_y_shift)
+        PadLeft(cell,path2.x,path2.y+temp_y_shift)
+        if (left_right!=2):
+
+            PadLeft(cell,path3.x,path3.y+temp_y_shift)
+        rec = gdspy.Rectangle((path2.x - Width_WG/2 - diss_to_metal - 15 , path2.y + 1000 - holes_height/2 - 50+temp_y_shift) 
+                            ,(path3.x + Width_WG/2 + diss_to_metal + 15 , path2.y + 1000 + holes_height/2 + 50+temp_y_shift)
+                            , **ld_Metal)
+        cell.add(rec)
+
+
+
+        ##### create the common electrode 
+        # r
+        y_to_pads=-temp_y_shift
+        if (left_right!=1):
+            rec = gdspy.Rectangle((x3-el_gap/2 , path2.y + 1000 - y_to_pads - holes_height/2 - 50) 
+                                ,(x3-(-el_gap/2+194) , path2.y + 1000 - y_to_pads + holes_height/2 + 50)
+                                , **ld_Metal)  
+            cell.add(rec)
+            rec = gdspy.Rectangle((x3-el_gap/2-15 , path2.y + 1000 - y_to_pads - holes_height/2 - 50+15) 
+                                ,(x3-(-el_gap/2+194-15) , path2.y + 1000 - y_to_pads + holes_height/2 + 50-15)
+                                , **ld_SU8)  
+            rect = rec.fillet(50)
+
+            cell.add(rect)
+    else:
+        # Single Electrode 
+        mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
+        mid2 = gdspy.offset([path3m,path2m] , diss_to_metal  , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 205 , y_o + B_length+Brad_length+S_length), (x + 00 , y_o + B_length+Brad_length+S_length + El_length*2), **ld_Metal)
+        stam = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        
+
+        stam = gdspy.boolean(stam,mid2,"not",**ld_Metal)
+        
+        
+        mid = gdspy.offset([path3,path2] , diss_to_metal + el_width  , join_first = True ,**ld_SU8)
+        mid2 = gdspy.offset([path3m,path2m] , diss_to_metal + el_width  , join_first = True ,**ld_SU8)
+        rect = gdspy.Rectangle((x - 600 , y_o + B_length+Brad_length+S_length), (x + 600 , y_o + B_length+Brad_length+S_length + El_length*2), **ld_Metal)
+        stam2 = gdspy.boolean(rect,mid,"not",**ld_Metal)
+        stam2 = gdspy.boolean(stam2,mid2,"not",**ld_Metal)
+        stam = gdspy.boolean(stam,stam2,"not",**ld_Metal)
+        # cell.add([stam])
+
+    cell.add([path1m,path2m,path3m,stam,stam1])
+
+    if (El_length==7500):
+        temp_y_shift=-6000
+    else:
+        temp_y_shift=-0
+
+
+    # end single electrode
+
+       ## add TEXT
+    text = gdspy.PolygonSet(render_text('wg='+str(Width_WG)+'\u03bcm, el_gap'+ str(el_gap)+'\u03bcm' ,size=100,position=(0,0) , font_prop=fp),**ld_Metal )
+    txt_cell =lib.new_cell(str(uuid.uuid1()))
+    txt_cell.add(text)
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60,y+200),rotation=90))
+    cell.add(gdspy.CellReference(txt_cell,(x+150+60-230,y+A_length*2+1200),rotation=90)) 
+    
+    
+    
+    
+    
+    # To add Pads in the design
+    
+    
+    
+    # cell.add(path1)
+    # cell.add([path1m,path2m,path3m,stam,stam1])
+    
+def Splitter1X4 (cell,B_length_Y = 100 , Brad_length_Y = 300 , Brad_Y = 6 , A_length_Y = 100  , S_length_Y = 1500 , S_height_Y = 210 
+                 , S_heigth_top_Y = 190 , Width_WG = Width_WG , x = 0 , y = 0 , el_width = Metal_width , el_gap = 17 , El_length = 14410):
+    
+    y_to_pads=20000
+    [r_x,r_y,l_x,l_y] = Y_splitter(cell = cell , B_length=B_length_Y ,Brad_length=Brad_length_Y
+                                   ,Brad=Brad_Y ,A_length=A_length_Y ,S_length=S_length_Y,
+                                   S_height=S_height_Y ,S_heigth_top=S_heigth_top_Y ,Width_WG=Width_WG ,x=x ,y=y
+                                   ,el_width=Metal_width,el_gap=el_gap,El_length=0,M=0)
+    Y_TEMP=50    
+    pathr = gdspy.Path(width=Width_WG,initial_point=(r_x,r_y))
+    pathr = sbendPath(wgsbend = pathr , L = S_length_Y , H = Y_TEMP*2 , info = ld_LN)
+    
+    Y_splitter(cell = cell , B_length=B_length_Y,Brad_length=Brad_length_Y
+               ,Brad=Brad_Y,A_length= 40020 - pathr.y - B_length_Y - Brad_length_Y - S_length_Y*2 ,S_length=S_length_Y*2,
+               S_height=S_height_Y,S_heigth_top=S_heigth_top_Y,Width_WG=Width_WG ,x=pathr.x ,y=pathr.y
+               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathr.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100 ,M=1,left_right=2,y_to_pads=20000)
+    
+    pathl = gdspy.Path(width=Width_WG,initial_point=(l_x,l_y))
+    pathl.x = pathl.x - Y_TEMP
+    pathl = sbendPathM(wgsbend = pathl , L = S_length_Y , H = Y_TEMP*2 , info = ld_LN)
+   
+    Y_splitter(cell = cell , B_length=B_length_Y,Brad_length=Brad_length_Y
+               ,Brad=Brad_Y,A_length=40020 - pathl.y - B_length_Y - Brad_length_Y - S_length_Y*2 ,S_length=S_length_Y*2,
+               S_height=S_height_Y,S_heigth_top=S_heigth_top_Y,Width_WG=Width_WG ,x=pathl.x ,y=pathl.y
+               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathl.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100,M=1,left_right=1,y_to_pads=20000)
+    cell.add([pathr,pathl])
 
