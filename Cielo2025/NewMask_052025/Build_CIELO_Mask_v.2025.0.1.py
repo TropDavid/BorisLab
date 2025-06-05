@@ -86,14 +86,14 @@ insert_tiles([22],"wgEL=22.R",Straigh,length_WG = 40000 ,x=+x_wg_split,y=0, El_l
 # Y-split
 # devices for ELOP
 
-insert_tiles([23],"wgEL=23.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split-100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17 ,left_right=1,A_length = 40010 - 700 - 4500,y_to_pads=20000)
-insert_tiles([23],"wgEL=23.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split+100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17,left_right=2,A_length = 40010 - 700 - 4500,y_to_pads=20000)
+insert_tiles([23],"wgEL=23.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17 ,A_length = 40010 - 700 - 4500)
+insert_tiles([23],"wgEL=23.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17,A_length = 40010 - 700 - 4500)
 
-insert_tiles([24],"wgEL=24.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split-100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17 ,left_right=1,A_length = 40010 - 700 - 4500,y_to_pads=20000)
-insert_tiles([24],"wgEL=24.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split+100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17,left_right=2,A_length = 40010 - 700 - 4500,y_to_pads=20000)
+insert_tiles([24],"wgEL=24.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17 ,A_length = 40010 - 700 - 4500)
+insert_tiles([24],"wgEL=24.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 17,A_length = 40010 - 700 - 4500)
 
-insert_tiles([25],"wgEL=25.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split-100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 15 ,left_right=1,A_length = 40010 - 700 - 4500,y_to_pads=20000)
-insert_tiles([25],"wgEL=25.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split+100 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 15,left_right=2,A_length = 40010 - 700 - 4500,y_to_pads=20000)
+insert_tiles([25],"wgEL=25.L",Y_splitter,Width_WG = 5.5 , x = -x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 15 ,A_length = 40010 - 700 - 4500)
+insert_tiles([25],"wgEL=25.R",Y_splitter,Width_WG = 5.0 , x = +x_wg_split*2 , y = 0 , el_width = 20 , El_length = 34000,el_gap = 15,A_length = 40010 - 700 - 4500)
 
 # 1x4
 # devices for ELOP

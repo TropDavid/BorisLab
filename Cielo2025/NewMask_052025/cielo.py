@@ -208,6 +208,9 @@ holes_width = 280
 holes_height = 1300
 diss_holes_wg = 51
 
+holes_widthS = 200
+holes_heightS = 1300
+
 pads_w=280
 pads_l=1300
 
@@ -222,6 +225,16 @@ rect = rec.fillet(50)
 pad_cell.add(rect)
 rect = gdspy.Rectangle((-holes_width/2-15 ,-holes_height/2-15), (holes_width/2+30,holes_height/2+15),**ld_Metal)
 pad_cell.add(rect)
+
+
+## create small pad sPAD
+s_pad_cell =lib.new_cell('sPAD')
+rec = gdspy.Rectangle((-holes_widthS/2 ,-holes_heightS/2)
+                        ,(holes_widthS/2,holes_heightS/2), **ld_SU8)
+rect = rec.fillet(50)
+s_pad_cell.add(rect)
+rect = gdspy.Rectangle((-holes_widthS/2-15 ,-holes_heightS/2-15), (holes_widthS/2+30,holes_heightS/2+15),**ld_Metal)
+s_pad_cell.add(rect)
 
 
 
@@ -287,9 +300,7 @@ def PadLeft(cell,x,y):
     rect = rec.fillet(50)
     cell.add(rect)
     
-    # rec = gdspy.Rectangle((x - diss_holes_wg - Width_WG/2 - diss_to_metal + 15 , y + 1000 - holes_height /2 - 15)
-    #                       ,(x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal  - 15, y + 1000 + holes_height /2 + 15 ), **ld_Metal)
-    # rect = rec.fillet(50)
+
     
     rect = gdspy.Rectangle((x - Width_WG/2 - diss_to_metal , y + 1000 - holes_height/2 - 15), (x - diss_holes_wg - holes_width - Width_WG/2 - diss_to_metal  - 15 , y + 1000 + holes_height/2 + 15),**ld_Metal)
     cell.add(rect)
@@ -327,8 +338,6 @@ def Straigh (cell,Width_WG = Width_WG,x = 0,y = 0,length_WG = length_WG , el_gap
     rect = gdspy.Rectangle((x - el_width , y + 500), (x + el_width , y + 500 + El_length), **ld_METAL2)
     stam = gdspy.boolean(rect,mid,"not",**ld_METAL2)
     
-    # PadLeft(cell,path1.x, path1.y/2+y_pads_shift)
-    # PadRight(cell,path1.x, path1.y/2+y_pads_shift)
     cell.add(gdspy.CellReference(pad_cell,(path1.x-holes_width/2-el_gap/2-30
                                            , path1.y/2+y_pads_shift)))
 
@@ -343,68 +352,94 @@ def Straigh (cell,Width_WG = Width_WG,x = 0,y = 0,length_WG = length_WG , el_gap
     cell.add(path1)
     cell.add(stam)
 
-
-def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 20010 - 700 - 4500  , S_length = 4500 , S_height = 210 
-                 , S_heigth_top = 190 , Width_WG = Width_WG , x = 0 , y = 0 ,y_to_pads=8500, el_width = Metal_width , el_gap=17 , El_length = 14410,M=1,left_right=0):
-    
-    diss_to_metal = (el_gap - Width_WG)/2
-
-    Tri(cell,x,y)
-    
-    #the start of the WG
+def y_split_block(cell,x,y,B_length,A_length,Brad_length,Brad,S_length,S_height,S_heigth_top):
+#the start of the WG
     path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
     path1.segment(length = B_length , direction ="+y" , **ld_LN)
-    path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)
-    
-    
-    
+    path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)    
     x = path1.x
-    y = path1.y
-    
+    y = path1.y    
     # creating the half circle in the Branch of Y-splitter
     rect = gdspy.Rectangle((x + Brad/2 + Width_WG/2, y), (x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_LN)
     circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_LN ,tolerance = 0.00001 , number_of_points = 199)
     stam = gdspy.boolean(rect,circle,"not",**ld_LN)
-    cell.add(stam)
-    
-  
+    cell.add(stam)    
     #creating the right arm 
     path2 = gdspy.Path(width = Width_WG ,initial_point = (path1.x + Brad/2,path1.y + 0.5 ))
     path2 = sbendPath(wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_LN)
     y_o = path2.y
-    
-    x2 = path2.x
-    
     path2.segment(length = A_length , direction ="+y" , **ld_LN)
-    
-    
-    if(M==1):
-     
-        #pad to the right of the right arm
-        if (left_right!=1):
-            PadRight(cell, x = path2.x, y = path2.y - y_to_pads)    
-        PadLeft(cell,path2.x,path2.y - y_to_pads)
-    
-    
     #creating the left arm
     path3 = gdspy.Path(width = Width_WG ,initial_point = ( path1.x - Brad/2 , path1.y + 0.5 ))
     path3.x = path3.x - S_height/2
     path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_LN)
-   
-    x3 = path3.x
     path3.segment(length = A_length , direction ="+y" , **ld_LN)
+    cell.add([path1,path2,path3])
+
+    return [path2,path3,y_o]
+
+
+def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 20010 - 700 - 4500  , S_length = 4500 , S_height = 204 
+                    , S_heigth_top = 190 , Width_WG = Width_WG , x = 0 , y = 0 , el_width = Metal_width , el_gap=17 
+                    ,y_pads_shift=1400, El_length = 14410,M=1):
+        
+    diss_to_metal = (el_gap - Width_WG)/2
+
+    Tri(cell,x,y)
+    
+    # #the start of the WG
+    # path1 = gdspy.Path( width = Width_WG ,initial_point = (x,y))
+    # path1.segment(length = B_length , direction ="+y" , **ld_LN)
+    # path1.segment(length = Brad_length , direction ="+y" , final_width = Width_WG + Brad , **ld_LN)
+    
+    
+    
+    # x = path1.x
+    # y = path1.y
+    
+    # # creating the half circle in the Branch of Y-splitter
+    # rect = gdspy.Rectangle((x + Brad/2 + Width_WG/2, y), (x - Brad/2 - Width_WG /2 ,y + 1  ),**ld_LN)
+    # circle = gdspy.Round((x, y + 1 ), 0.5 ,initial_angle = np.pi , final_angle = 2*np.pi ,**ld_LN ,tolerance = 0.00001 , number_of_points = 199)
+    # stam = gdspy.boolean(rect,circle,"not",**ld_LN)
+    # cell.add(stam)
+    
+  
+    # #creating the right arm 
+    # path2 = gdspy.Path(width = Width_WG ,initial_point = (path1.x + Brad/2,path1.y + 0.5 ))
+    # path2 = sbendPath(wgsbend = path2 , L = S_length , H = S_heigth_top , info = ld_LN)
+    # y_o = path2.y
+    
+    
+    # path2.segment(length = A_length , direction ="+y" , **ld_LN)
+    [path2,path3,y_o]=y_split_block(cell,x,y,B_length,A_length,Brad_length,Brad,S_length,S_height,S_heigth_top)
+
+
     if(M==1):
-        #creating the middle line to connect both ground
-        rec = gdspy.Rectangle((x2 - Width_WG/2 - diss_to_metal - 15 , path2.y + 1000 - y_to_pads - holes_height/2 - 50) 
-                              ,(x3 + Width_WG/2 + diss_to_metal + 15 , path2.y + 1000 - y_to_pads + holes_height/2 + 50)
-                              , **ld_Metal)
-        cell.add(rec)
-        if (left_right!=2):
-            PadLeft(cell, x = path3.x, y = path3.y - y_to_pads)
      
+        #pad to the right of the right arm
+        cell.add(gdspy.CellReference(s_pad_cell,(path2.x-holes_widthS/2-el_gap/2-30
+                                    , path2.y/2+y_pads_shift)))
+
+        cell.add(gdspy.CellReference(s_pad_cell,(path2.x+holes_widthS/2+el_gap/2+30
+                                        , path2.y/2+y_pads_shift),rotation=180))
+
+    
+    
+    # #creating the left arm
+    # path3 = gdspy.Path(width = Width_WG ,initial_point = ( path1.x - Brad/2 , path1.y + 0.5 ))
+    # path3.x = path3.x - S_height/2
+    # path3 = sbendPathM( wgsbend = path3 , L = S_length , H = S_height , info = ld_LN)
    
-                  
+    # path3.segment(length = A_length , direction ="+y" , **ld_LN)
+
+
     if(M ==1):
+    ##small peds to - left branch
+        cell.add(gdspy.CellReference(s_pad_cell,(path3.x-holes_widthS/2-el_gap/2-30
+                            , path3.y/2-y_pads_shift)))
+        cell.add(gdspy.CellReference(s_pad_cell,(path3.x+holes_widthS/2+el_gap/2+30
+                                        , path3.y/2-y_pads_shift),rotation=180))
+
         #creating the contact
         mid = gdspy.offset([path3,path2] , diss_to_metal , join_first = True ,**ld_SU8)
         rect = gdspy.Rectangle((x - 600 , y_o), (x + 600 , y_o + El_length), **ld_Metal)
@@ -416,19 +451,7 @@ def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 
         
         stam = gdspy.boolean(stam,stam2,"not",**ld_Metal)
     
-    ##### create the common electrode 
-    # r
-    if (left_right!=1):
-        rec = gdspy.Rectangle((x3-el_gap/2 , path2.y + 1000 - y_to_pads - holes_height/2 - 50) 
-                              ,(x3-(-el_gap/2+194) , path2.y + 1000 - y_to_pads + holes_height/2 + 50)
-                              , **ld_Metal)  
-        cell.add(rec)
-        rec = gdspy.Rectangle((x3-el_gap/2-15 , path2.y + 1000 - y_to_pads - holes_height/2 - 50+15) 
-                              ,(x3-(-el_gap/2+194-15) , path2.y + 1000 - y_to_pads + holes_height/2 + 50-15)
-                              , **ld_SU8)  
-        rect = rec.fillet(50)
 
-        cell.add(rect)
   
    
     # sign at the top
@@ -440,9 +463,9 @@ def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 
     
     
     if (M == 1):
-        cell.add([path1,path2,path3,stam])
-    else:
-        cell.add([path1,path2,path3])
+        cell.add(stam)
+    # else:
+    #     cell.add([path1,path2,path3])
     ## add TEXT
     text = gdspy.PolygonSet(render_text('wg='+str(Width_WG)+'\u03bcm, el_gap'+ str(el_gap)+'\u03bcm' ,size=100,position=(0,0) , font_prop=fp),**ld_Metal )
     txt_cell =lib.new_cell(str(uuid.uuid1()))
@@ -453,7 +476,7 @@ def Y_splitter (cell,B_length = 100 , Brad_length = 600 , Brad = 6 , A_length = 
 
     return([path2.x , path2.y , path3.x , path3.y])
 
-def MZ (cell,B_length = 100 , Brad_length = 400 , Brad = 6 , A_length = 20005 - 5002.5  , S_length = 4502.5 , S_height = 210  
+def MZ (cell,B_length = 100 , Brad_length = 400 , Brad = 6 , A_length = 20005 - 5002.5  , S_length = 4502.5 , S_height = 204  
                  , S_heigth_top = 190 ,Width_WG = Width_WG , x = 0 , y = 0 , el_width = Metal_width , el_gap=17 , El_length = 14000,left_right=0):
 
     diss_to_metal = (el_gap - Width_WG)/2
@@ -611,7 +634,7 @@ def Splitter1X4 (cell,B_length_Y = 100 , Brad_length_Y = 300 , Brad_Y = 6 , A_le
     Y_splitter(cell = cell , B_length=B_length_Y,Brad_length=Brad_length_Y
                ,Brad=Brad_Y,A_length= 40020 - pathr.y - B_length_Y - Brad_length_Y - S_length_Y*2 ,S_length=S_length_Y*2,
                S_height=S_height_Y,S_heigth_top=S_heigth_top_Y,Width_WG=Width_WG ,x=pathr.x ,y=pathr.y
-               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathr.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100 ,M=1,left_right=2,y_to_pads=20000)
+               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathr.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100 ,M=1)
     
     pathl = gdspy.Path(width=Width_WG,initial_point=(l_x,l_y))
     pathl.x = pathl.x - Y_TEMP
@@ -620,6 +643,6 @@ def Splitter1X4 (cell,B_length_Y = 100 , Brad_length_Y = 300 , Brad_Y = 6 , A_le
     Y_splitter(cell = cell , B_length=B_length_Y,Brad_length=Brad_length_Y
                ,Brad=Brad_Y,A_length=40020 - pathl.y - B_length_Y - Brad_length_Y - S_length_Y*2 ,S_length=S_length_Y*2,
                S_height=S_height_Y,S_heigth_top=S_heigth_top_Y,Width_WG=Width_WG ,x=pathl.x ,y=pathl.y
-               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathl.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100,M=1,left_right=1,y_to_pads=20000)
+               ,el_width=el_width,el_gap=el_gap,El_length=40020 - pathl.y - B_length_Y - Brad_length_Y - S_length_Y*2 - 100,M=1)
     cell.add([pathr,pathl])
 
