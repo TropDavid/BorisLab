@@ -10,6 +10,10 @@ import uuid
 from cielo import *
 from cielo import lib,cell_width,cells
 
+def ruler (cell,x=0,y=0,num_of_small_ticks=4,width_tick=2,hight_tick=5,layer=0):
+    tick1_cell = gdspy.Cell(name)
+    path1 = gdspy.Path( width = width_tick ,initial_point = (x,y))
+    path1.segment(length = hight_tick , direction ="+y" , layer=layer)
 
 
 def insert_tiles(tiles,cellname,fun, **arg):
@@ -57,10 +61,10 @@ insert_tiles([12],"wgEL=12.R",Straigh,length_WG = 20000 ,x=+x_wg_split,y=0, El_l
 insert_tiles([13],"wgEL=13.L",Straigh,length_WG = 20000 ,x=-x_wg_split,y=0, El_length = 19000 , el_gap = 14 , el_width = 20  , Width_WG = 5.5,y_pads_shift=-3000)
 insert_tiles([13],"wgEL=13.R",Straigh,length_WG = 20000 ,x=+x_wg_split,y=0, El_length = 19000 , el_gap = 14 , el_width = 20  , Width_WG = 5.0,y_pads_shift=+2700)
 # MZ
-insert_tiles([14],"wgEL=14",MZ,A_length=5000,x=-0,y=0, El_length = 5000, el_gap = 17 , el_width = 20  , Width_WG = 5.5)
-insert_tiles([15],"wgEL=15",MZ,A_length=5000,x=-0,y=0, El_length = 5000, el_gap = 17 , el_width = 20  , Width_WG = 5.0)
-insert_tiles([16],"wgEL=16",MZ,A_length=5000,x=-0,y=0, El_length = 5000, el_gap = 15 , el_width = 20  , Width_WG = 5.5)
-insert_tiles([17],"wgEL=17",MZ,A_length=5000,x=-0,y=0, El_length = 5000, el_gap = 15 , el_width = 20  , Width_WG = 5.0)
+insert_tiles([14],"wgEL=14",MZ,A_length=10000,x=-0,y=0, El_length = 10000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([15],"wgEL=15",MZ,A_length=10000,x=-0,y=0, El_length = 10000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=1)
+insert_tiles([16],"wgEL=16",MZ,A_length=10000,x=-0,y=0, El_length = 10000, el_gap = 15 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([17],"wgEL=17",MZ,A_length=10000,x=-0,y=0, El_length = 10000, el_gap = 15 , el_width = 20  , Width_WG = 5.0,left_right=1)
 
 
 
@@ -103,49 +107,49 @@ insert_tiles([28],"wgEL=28.0",Splitter1X4,Width_WG = 5.0 , x = 0 , y = 0 , el_wi
 
 # MZ
 # single E
-insert_tiles([29],"wgEL=29.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
-insert_tiles([29],"wgEL=29.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
+insert_tiles([29],"wgEL=29.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 15000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
+insert_tiles([29],"wgEL=29.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 15000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
 
-insert_tiles([30],"wgEL=30.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
-insert_tiles([30],"wgEL=30.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
+insert_tiles([30],"wgEL=30.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 15000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
+insert_tiles([30],"wgEL=30.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 15000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
 
-insert_tiles([31],"wgEL=31.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 7500, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
-insert_tiles([31],"wgEL=31.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 7500, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
+insert_tiles([31],"wgEL=31.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 7500*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=5)
+insert_tiles([31],"wgEL=31.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 7500*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=5)
 
 # Regular
-insert_tiles([32],"wgEL=32.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([32],"wgEL=32.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
+insert_tiles([32],"wgEL=32.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 16000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=2)
+insert_tiles([32],"wgEL=32.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 16000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=3)
 
-insert_tiles([33],"wgEL=33.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([33],"wgEL=33.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
-
-
-insert_tiles([34],"wgEL=34.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 7500, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([34],"wgEL=34.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 7500, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
+insert_tiles([33],"wgEL=33.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=2)
+insert_tiles([33],"wgEL=33.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=3)
 
 
-insert_tiles([35],"wgEL=35.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([35],"wgEL=35.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
-
-insert_tiles([36],"wgEL=36.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([36],"wgEL=36.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
-
-insert_tiles([37],"wgEL=37.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 15 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([37],"wgEL=37.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 15 , el_width = 20  , Width_WG = 5.0,left_right=2)
+insert_tiles([34],"wgEL=34.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 7500*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=2)
+insert_tiles([34],"wgEL=34.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 7500*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=3)
 
 
-insert_tiles([38],"wgEL=38.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([38],"wgEL=38.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=2)
+insert_tiles([35],"wgEL=35.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([35],"wgEL=35.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=1)
 
-insert_tiles([39],"wgEL=39.L",MZ,A_length= 20005 - 5002.5,x=-x_wg_split-100 ,y=0, El_length = 17000, el_gap = 15 , el_width = 20  , Width_WG = 5.5,left_right=1)
-insert_tiles([39],"wgEL=39.R",MZ,A_length= 20005 - 5002.5,x=+x_wg_split+100 ,y=0, El_length = 17000, el_gap = 15 , el_width = 20  , Width_WG = 5.0,left_right=2)
+insert_tiles([36],"wgEL=36.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([36],"wgEL=36.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=1)
+
+insert_tiles([37],"wgEL=37.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 15 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([37],"wgEL=37.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 15 , el_width = 20  , Width_WG = 5.0,left_right=1)
 
 
-exportname="Mask_Cielo_BIU_2025.v02"
+insert_tiles([38],"wgEL=38.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([38],"wgEL=38.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 17 , el_width = 20  , Width_WG = 5.0,left_right=1)
+
+insert_tiles([39],"wgEL=39.L",MZ,A_length= 30000,x=-x_wg_split-200 ,y=0, El_length = 17000*2, el_gap = 15 , el_width = 20  , Width_WG = 5.5,left_right=1)
+insert_tiles([39],"wgEL=39.R",MZ,A_length= 30000,x=+x_wg_split+200 ,y=0, El_length = 17000*2, el_gap = 15 , el_width = 20  , Width_WG = 5.0,left_right=1)
+
+
+exportname="Mask_Cielo_BIU_2025.v03"
 lib.write_gds(exportname+'.gds')
-# faltten_cell=top_cell.flatten()
-# lib.write_gds(exportname+'_flattened.gds', cells=[faltten_cell])    
-    
+faltten_cell=top_cell.flatten()
+lib.write_gds(exportname+'_f.gds', cells=[faltten_cell])    
+# gdspy.LayoutViewer()
     
 
     
